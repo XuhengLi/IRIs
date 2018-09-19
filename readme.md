@@ -24,7 +24,7 @@ a = a + 1;
 cout << a << endl;
 ```
 
-But in IRIs, it will be more :
+But in IRIs, it will be:
 
 ```
 input()
@@ -60,7 +60,8 @@ A workflow should start with the keyword `HeySiri` followed by a workflow name a
 - `$`: <br /> A placeholder for output. Explain below.
 ### Basic Workflows
 - `input()`: <br /> Just like the input function of other languages, it accepts the input from a user and will pass it to others by the flow symbol.
-- `{}`: <br /> We call this pair of parenthesis `choose`. It likes the switch-case expression of other languages, but slightly different. In other languages, the switch-case expression likes another form of an if expression (although the low-level implementation is different, I know). In IRIs, `{}` is more of interactive instruction. It accepts an input of a list, and prompts the items from the list to the user, waits user choosing an item (or an option), then output flow of data.
+- `list[]`:<br /> The `list[]` keyword defines a basic data type in IRIs. This data type is an indispensible part of the IRIs. A list is not only an array like data type that stores a set of data, but also connect with the user interaction tightly.
+- `choose{}`: <br /> It likes the switch-case expression of other languages, but slightly different. In other languages, the switch-case expression likes another form of an if expression (although the low-level implementation is different, I know). In IRIs, `choose{}` is more of an interactive instruction. It accepts an input of a list, and prompts the items from the list to the user, waits user choosing an item (or an option), then output flow of data.
 - `ShowResult()`: <br /> Like the print function of other languages. It accepts input from a flow, too. And inside the parenthesis, it uses the keyword `$` as a placeholder of the input.
 
 ### Sample Code
@@ -72,9 +73,9 @@ input()
 |
 bill
 
-[0.12, 0.15, 0.18, 0.20]
+list[0.12, 0.15, 0.18, 0.20]
 |
-{
+choose{
     1:
         0.12
     2:
