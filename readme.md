@@ -1,5 +1,5 @@
-# IRIs
-
+# IRIs 
+xl2784 st3174 hg2498 pt2508
 ## Introduction
 
 Inspired by the powerful macOS tool Alfred, we decide to design a workflow description language called IRIs. IRIs not only stands for the flower but stands for the reverse of the Apple so-called smart assistant Siri.
@@ -13,7 +13,7 @@ IRIs is used to describe and generate a workflow that with the input of the user
 IRIs is mainly made up of two key structures: the expression and the workflow.
 
 #### Expression
-The expression is similar to what other awful or terrific languages which can be defined as a single instruction. But it is slightly different that expressions in IRIs is connected by a flow symbol (or pipe, whatever) `|` and the value of an expression will flow down to the next line if connected so that you do not need to use ~~silly~~ temporary variables to transmit information and will also make your program subtle and neat.
+The expression is similar to what other awful or terrific languages which can be defined as a single instruction. But it is slightly different that expressions in IRIs are connected by a flow symbol (or pipe, whatever) `|` and the value of an expression will flow down to the next line if connected so that you do not need to use ~~silly~~ temporary variables to transmit information and will also make your program subtle and neat.
 
 For example, in C++, if we want to receive an input from a keyboard and add 1 to that input, what we needto do is:
 
@@ -60,7 +60,7 @@ A workflow should start with the keyword `HeySiri` followed by a workflow name a
 - `$`: <br /> A placeholder for output. Explain below.
 ### Basic Workflows
 - `input()`: <br /> Just like the input function of other languages, it accepts the input from a user and will pass it to others by the flow symbol.
-- `list[]`:<br /> The `list[]` keyword defines a basic data type in IRIs. This data type is an indispensible part of the IRIs. A list is not only an array like data type that stores a set of data, but also connect with the user interaction tightly.
+- `list[]`:<br /> The `list[]` keyword defines a basic data type in IRIs. This data type is an indispensable part of the IRIs. A list is not only an array like data type that stores a set of data but also connect with the user interaction tightly.
 - `choose{}`: <br /> It likes the switch-case expression of other languages, but slightly different. In other languages, the switch-case expression likes another form of an if expression (although the low-level implementation is different, I know). In IRIs, `choose{}` is more of an interactive instruction. It accepts an input of a list, and prompts the items from the list to the user, waits user choosing an item (or an option), then output flow of data.
 - `ShowResult()`: <br /> Like the print function of other languages. It accepts input from a flow, too. And inside the parenthesis, it uses the keyword `$` as a placeholder of the input.
 
