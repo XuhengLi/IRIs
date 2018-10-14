@@ -1,8 +1,7 @@
 {open Parser}
 
 rule token =
-    parse [' ' '\t' '\r']  { token lexbuf }  (* whitespace *)
-    |['\n']                     { RETURN }
+    parse [' ' '\t' '\r' '\n']  { token lexbuf }  (* whitespace *)
     | "/*"                      { comment lexbuf }(* start comment *)
     (* operators*)
     | '+'                       { PLUS }
@@ -21,8 +20,8 @@ rule token =
     | "!="                      { NEQ }
     | '<'                       { LT }
     | '>'                       { GT }
-    | '|'                       { OR }
-    | '&'                       { AND }
+    | "||"                       { OR }
+    | '&&'                       { AND }
     | ("true"|"false") as lit   { BOOL(bool_of_string bl)}
     (* num *)
     | ['0' - '9']+ as lit       {INT(int_of_string lit)}
@@ -46,6 +45,3 @@ rule token =
     | "Siri"                    { SIRI}
     and comment = parse "*/" {token lexbuf} (* end comment *)
     | _ {comment lexbuf}
-
-
-
