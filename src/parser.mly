@@ -3,17 +3,20 @@ open Ast
 let quote_remover a = String.sub a 1 ((String.length a) - 2);;
 %}
 
-%token SEMI COMMA LPR RPR LBK RBK LBC RBC
-%token IF ELIF ELSE ENDIF WHILE
+%token COMMA LPAR RPAR LSQR RSQR
+%token IF ELIF ENDIF ELSE ENDFUN
+%token WHILE ENDLOOP BREAK CONTINUE
 %token TRUE FALSE
-%token PLUS MINUS TIMES DIVIDE MOD EQ NEQ LEQ REQ
-%token RAPPEND LAPPEND LR RL AND OR NOT
-%token FILE REGEX EOF ASSIGN
-%token RETURN BOOL FLOAT STRING INT
-%token <string> ID REGEX_STRING STRING_T FILE_T
-%token <int> INT_T
-%token <float> FLOAT_T
-%token <bool> BOOL_T
+%token PLUS MINUS TIMES DIVIDE MOD
+%token EQ NEQ LEQ GEQ LT GT OR AND NOT
+%token EOF PIPE
+%token RETURN
+%token <string> TYPE
+%token <string> ID
+%token <string> STRING
+%token <int> INT
+%token <float> FLOAT
+%token <bool> BOOL
 
 %nonassoc ELSE
 %right ASSIGN
@@ -23,8 +26,9 @@ let quote_remover a = String.sub a 1 ((String.length a) - 2);;
 %left LR RL LEQ REQ
 %left PLUS MINUS
 %left TIMES DIVIDE
+%left PIPE
 %right NOT
-%left LBK RBK
+%left LSQR RSQR
 
 %start program
 %type <Ast.program> program
@@ -38,24 +42,22 @@ program:
 
 /* start of decls */
 fdecl:
-    typ ID LPR formal_list RPR LBC vdecl_list stmt_list RBC
+    typ ID LPAR param_list RPAR vdecl_list stmt_list ENDFUN
     { { ftyp = $1;
         fname = $2;
-        formals = $4;
-        locals = List.rev $7;
-        body = List.rev $8 } }
+        params = $4;
+        locals = List.rev $6;
+        body = List.rev $7 } }
 
 typ:
-    | VOID { Void }
     | STRING { String }
     | FLOAT { Float }
     | BOOL { Bool }
     | INT { Int }
-    | FILE { File }
 
-formal_list:
+param_list:
                     { [] }
-    | formal_list formal_decl  { $2 :: $1 }
+    | param_list formal_decl  { $2 :: $1 }
 
 formal_decl:
     typ ID         { VarDecl($1, $2, Noexpr) }
@@ -68,15 +70,15 @@ vdecl_list:
 /*
 vdecl:
     typ ID SEMI { VarDecl($1, $2, Noexpr) }
-    | typ ID LBK INT_T RBK SEMI {VarDecl(Arr($1, $4), $2, Noexpr)}
-    | typ ID LBK INT_T RBK ASSIGN expr SEMI {VarDecl(Arr($1, $4), $2, $7)}
+    | typ ID LSQR INT_T RSQR SEMI {VarDecl(Arr($1, $4), $2, Noexpr)}
+    | typ ID LSQR INT_T RSQR ASSIGN expr SEMI {VarDecl(Arr($1, $4), $2, $7)}
     | typ ID ASSIGN expr SEMI { VarDecl($1, $2, $4) }
 */
 
 /**/
 array_list:
     /* nothing */ { [] }
-    | LBK INT_T RBK array_list { $2 :: $4 }
+    | LSQR INT_T RSQR array_list { $2 :: $4 }
 
 bind:
     | typ ID array_list
@@ -109,47 +111,40 @@ stmt_list:
     | stmt_list stmt {$2 :: $1}
 
 stmt:
-| expr SEMI { Expr $1 }
-| RETURN expr SEMI { Return($2) }
-| LBC stmt_list RBC { Block(List.rev $2) }
-| IF LPR expr RPR stmt ELSE stmt ENDIF   { If($3, $5, $7) }
-| WHILE LPR expr RPR stmt ENDWHILE { While($3, $5) }
-
-expr_opt:
-     { Noexpr }
-     | expr { $1 }
+| expr NEWLINE { Expr $1 }
+| RETURN expr NEWLINE { Return($2) }
+| IF LPAR expr RPAR stmt ELSE stmt ENDIF   { If($3, $5, $7) }
+| WHILE LPAR expr RPAR stmt ENDWHILE { While($3, $5) }
 
 expr:
-      STRING_T           { Sliteral(quote_remover($1)) }
-    | FLOAT_T            { Fliteral($1) }
-    | INT_T              { Literal($1)  }
-    | BOOL_T             { BoolLit($1)  }
-    | FILE_T             { FileLiteral($1)  }
+      STRING           { Sliteral(quote_remover($1)) }
+    | FLOAT            { Fliteral($1) }
+    | INT              { Literal($1)  }
+    | BOOL             { BoolLit($1)  }
     | ID                 { Id($1) }
-	| LBK expr_list RBK  { Array_Lit($2) }
+	| LSQR expr_list RSQR  { Array_Lit($2) }
     | expr PLUS   expr   { Binop($1, Add,   $3) }
     | expr MINUS  expr   { Binop($1, Sub,   $3) }
     | expr TIMES  expr   { Binop($1, Mult,  $3) }
     | expr DIVIDE expr   { Binop($1, Div,   $3) }
     | expr EQ     expr   { Binop($1, Equal, $3) }
     | expr NEQ    expr   { Binop($1, Neq,   $3) }
-    | expr RL     expr   { Binop($1, Less,  $3) }
+    | expr LT     expr   { Binop($1, Less,  $3) }
     | expr LEQ    expr   { Binop($1, Leq,   $3) }
-    | expr LR     expr   { Binop($1, Greater, $3) }
-    | expr REQ    expr   { Binop($1, Geq,   $3) }
+    | expr GT     expr   { Binop($1, Greater, $3) }
+    | expr GEQ    expr   { Binop($1, Geq,   $3) }
     | expr AND    expr   { Binop($1, And,   $3) }
     | expr OR     expr   { Binop($1, Or,    $3) }
     | MINUS       expr   { Unop(Neg, $2) }
     | NOT expr           { Unop(Not, $2) }
-    | expr ASSIGN expr   { Assign($1, $3) }
-    /*| LBK RBK            { Call("create", []) }*/
-    | expr LBK expr RBK    { Array_Index($1, $3) }
-    | ID LPR args_opt RPR { Call($1, $3) }
-    | LPR expr RPR       { $2 }
+    | expr PIPE expr   { Assign($3, $1) }
+    | expr LSQR expr RSQR    { Array_Index($1, $3) }
+    | ID LPAR args_opt RPAR { Call($1, $3) }
+    | LPAR expr RPAR       { $2 }
 
 expr_list:
     | expr { [$1] }
-    | expr COMMA expr_list { $1 :: $3 }
+    | expr NEWLINE expr_list { $1 :: $3 }
 
 args_opt:
     { [] }
@@ -157,8 +152,3 @@ args_opt:
 args_list:
     expr { [$1] }
     | args_list COMMA expr { $3 :: $1 }
-
-/* start of regex */
-single_regex:
-    REGEX_STRING { $1 }
-/* end of regex */
