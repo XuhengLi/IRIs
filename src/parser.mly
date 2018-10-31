@@ -10,12 +10,9 @@ open Ast
 %token EQ NEQ LEQ GEQ LT GT OR AND NOT
 %token EOF PIPE
 %token RETURN
-%token <string> TYPE
-%token <string> ID
-%token <string> STRING
-%token <int> INT
-%token <float> FLOAT
-%token <bool> BOOL
+%token <string> LSTR ID LFLT
+%token <int> LINT
+%token <bool> LBOOL
 
 %nonassoc ELSE
 %left PIPE
@@ -54,6 +51,12 @@ param_list:
     TYPE ID                      {[($1, $2)]}
     | TYPE ID COMMA param_list   {($1, $2) :: $4}
 
+TYPE:
+    FLOAT       { Float }
+    | INT       { Int}
+    | STRING    { String }
+    | BOOL      { Bool }
+
 /* end of decls */
 
 /* end of rule_list */
@@ -67,7 +70,8 @@ stmt:
     | RETURN expr NEWLINE { Return($2) }
     | IF LPAR expr RPAR stmt ELSE stmt ENDIF   { If($3, $5, $7) }
     | WHILE LPAR expr RPAR stmt ENDLOOP { While($3, $5) }
-    | TYPE id_list NEWLINE { VarDecl($1, $2) }
+    | TYPE id_list NEWLINE { Vdecl($1, $2, Noexpr) }
+    | TYPE id PIPE expr NEWLINE { Vdecl($1, $2, $4) }
     /*| LPAR expr_list RPAR PIPE TYPE id_list NEWLINE { VarMulDecl($2, $5, $6)}*/
 
 id_list:
@@ -80,12 +84,12 @@ expr_list:
 
 
 expr:
-      STRING                    { String($1) }
-    | FLOAT                     { Float($1) }
-    | INT                       { Int($1)  }
-    | BOOL                      { Bool($1)  }
+      LSTR                      { Lstring($1) }
+    | LFLT                      { Lfloat($1) }
+    | LINT                      { Lint($1) }
+    | LBOOL                      { Lbool($1) }
     | ID                        { Id($1) }
-    | TYPE LSQR expr_list RSQR  { List($1, $3) }
+    | LSQR expr_list RSQR       { Llist($1) }
     | expr PLUS   expr   { Binop($1, Add,   $3) }
     | expr MINUS  expr   { Binop($1, Sub,   $3) }
     | expr TIMES  expr   { Binop($1, Mult,  $3) }
@@ -100,7 +104,7 @@ expr:
     | expr OR     expr   { Binop($1, Or,    $3) }
     | MINUS       expr   { Unop(Neg, $2) }
     | NOT expr           { Unop(Not, $2) }
-    | expr PIPE expr     { Assign($3, $1) }
+    | expr PIPE ID     { Assign($3, $1) }
     | expr LSQR expr RSQR       { Getn($1, $3) }
     | ID LPAR args_opt RPAR     { Call($1, $3) }
     | LPAR expr RPAR            { $2 }

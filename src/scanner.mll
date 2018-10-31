@@ -28,18 +28,21 @@ rule token =
     | "||"                      { OR }
     | "&&"                      { AND }
     | '!'                       { NOT }
-    | ("true"|"false") as bl    { BOOL(bool_of_string bl)}
+    | ("true"|"false") as bl    { LITBOOL(bool_of_string bl) }
     (* num *)
-    | ['0' - '9']+ as lit       {INT(int_of_string lit)}
-    | ['0' - '9']*.['0' - '9']+ as lit  {FLT(float_of_string lit)}
-    | ['0' - '9']+.['0' - '9']* as lit  {FLT(float_of_string lit)}
+    | ['0' - '9']+ as lit       { LINT(int_of_string lit) }
+    | ['0' - '9']*.['0' - '9']+ as lit  { LFLT(lit) }
+    | ['0' - '9']+.['0' - '9']* as lit  { LFLT(lit) }
     (* String *)
-    | '"'(['\000' - '\033' '\035' - '\127']* as str)'"' {STRING(str)}
+    | '"'((['\000' - '\033' '\035' - '\127']|"\\\"")* as str)'"' { LSTR(str) }
     (* ID *)
     | ['a' - 'z' 'A' - 'Z']['a' - 'z' 'A' - 'Z' '0' - '9' '_']* as id { ID(id) }
     | _ as ch { raise (Failure("invalid character detected" ^ Char.escaped ch)) }
     (* key words *)
-    | ("int"|"float"|"string"|"bool") as tp {TYPE(tp)}
+    | "int"                     { INT }
+    | "float"                   { FLOAT }
+    | "string"                  { STRING }
+    | "bool"                    { BOOL }
     | "if"                      { IF }
     | "else"                    { ELSE }
     | "elif"                    { ELIF }
