@@ -1311,7 +1311,7 @@ let
 # 1312 "scanner.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
 # 31 "scanner.mll"
-                                ( LITBOOL(bool_of_string bl) )
+                                ( LBOOL(bool_of_string bl) )
 # 1316 "scanner.ml"
 
   | 24 ->

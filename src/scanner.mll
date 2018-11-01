@@ -28,7 +28,7 @@ rule token =
     | "||"                      { OR }
     | "&&"                      { AND }
     | '!'                       { NOT }
-    | ("true"|"false") as bl    { LITBOOL(bool_of_string bl) }
+    | ("true"|"false") as bl    { LBOOL(bool_of_string bl) }
     (* num *)
     | ['0' - '9']+ as lit       { LINT(int_of_string lit) }
     | ['0' - '9']*'.'['0' - '9']+ as lit  { LFLT(lit) }

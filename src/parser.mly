@@ -41,7 +41,7 @@ fdecl:
     TYPE ID LPAR param RPAR vdecl_list stmt_list ENDFUN
     { { typ = $1;
         fname = $2;
-        formals = List.rev $4
+        formals = List.rev $4;
         locals = List.rev $6;
         body = List.rev $7 } }
 
