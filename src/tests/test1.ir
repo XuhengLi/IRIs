@@ -1,0 +1,19 @@
+int fun(int a)
+   int b
+    a
+    |
+    +1
+    |
+    b
+
+    return b
+    Siri
+
+
+int main()
+    fun(5)
+    |
+    c
+
+    return c
+    Siri
