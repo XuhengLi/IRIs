@@ -39,10 +39,11 @@ program:
 /* start of decls */
 fdecl:
     TYPE ID LPAR param RPAR vdecl_list stmt_list ENDFUN
-    { { ftyp = $1;
+    { { typ = $1;
         fname = $2;
-        params = $4;
-        body = List.rev $6 } }
+        formals = List.rev $4
+        locals = List.rev $6;
+        body = List.rev $7 } }
 
 param:
                     { [] }
@@ -82,7 +83,7 @@ vdecl_list:
     | vdecl_list vdecl { $2 :: $1 }
 
 vdecl:
-    TYPE id_list NEWLINE { Vdecl($1, $2, Noexpr) }
+    TYPE id_list NEWLINE { $1, $2 }
     /*| expr PIPE TYPE ID NEWLINE { Vdecl($3, $4, $1) }*/
 
 id_list:
