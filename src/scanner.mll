@@ -31,8 +31,8 @@ rule token =
     | ("true"|"false") as bl    { LITBOOL(bool_of_string bl) }
     (* num *)
     | ['0' - '9']+ as lit       { LINT(int_of_string lit) }
-    | ['0' - '9']*.['0' - '9']+ as lit  { LFLT(lit) }
-    | ['0' - '9']+.['0' - '9']* as lit  { LFLT(lit) }
+    | ['0' - '9']*'.'['0' - '9']+ as lit  { LFLT(lit) }
+    | ['0' - '9']+'.'['0' - '9']* as lit  { LFLT(lit) }
     (* String *)
     | '"'((['\000' - '\033' '\035' - '\127']|"\\\"")* as str)'"' { LSTR(str) }
     (* ID *)
