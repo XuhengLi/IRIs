@@ -9,6 +9,7 @@ open Ast
 %token PLUS MINUS TIMES DIVIDE MOD
 %token EQ NEQ LEQ GEQ LT GT OR AND NOT
 %token EOF PIPE
+%token INT FLOAT BOOL STRING
 %token RETURN
 %token <string> LSTR ID LFLT
 %token <int> LINT
@@ -32,12 +33,12 @@ open Ast
 /* functions are */
 program:
     { [], [] }
-    /*| program vdecl    { ($2 :: fst $1), snd $1 }*/
+    | program vdecl    { ($2 :: fst $1), snd $1 }
     | program fdecl    { fst $1, ($2 :: snd $1) }
 
 /* start of decls */
 fdecl:
-    TYPE ID LPAR param RPAR stmt_list ENDFUN
+    TYPE ID LPAR param RPAR vdecl_list stmt_list ENDFUN
     { { ftyp = $1;
         fname = $2;
         params = $4;
@@ -52,10 +53,14 @@ param_list:
     | TYPE ID COMMA param_list   {($1, $2) :: $4}
 
 TYPE:
-    FLOAT       { Float }
-    | INT       { Int}
-    | STRING    { String }
-    | BOOL      { Bool }
+    basic_type          { $1 }
+    | basic_type LSQR RSQR      { List($1)}
+
+basic_type:
+    FLOAT               { Float }
+    | INT               { Int}
+    | STRING            { String }
+    | BOOL              { Bool }
 
 /* end of decls */
 
@@ -66,13 +71,19 @@ stmt_list:
     | stmt_list stmt {$2 :: $1}
 
 stmt:
-    | expr NEWLINE { Expr $1 }
-    | RETURN expr NEWLINE { Return($2) }
-    | IF LPAR expr RPAR stmt ELSE stmt ENDIF   { If($3, $5, $7) }
-    | WHILE LPAR expr RPAR stmt ENDLOOP { While($3, $5) }
-    | TYPE id_list NEWLINE { Vdecl($1, $2, Noexpr) }
-    | TYPE id PIPE expr NEWLINE { Vdecl($1, $2, $4) }
+    | expr NEWLINE                              { Expr $1 }
+    | RETURN expr NEWLINE                       { Return($2) }
+    | IF LPAR expr RPAR stmt ELSE stmt ENDIF    { If($3, $5, $7) }
+    | WHILE LPAR expr RPAR stmt ENDLOOP         { While($3, $5) }
     /*| LPAR expr_list RPAR PIPE TYPE id_list NEWLINE { VarMulDecl($2, $5, $6)}*/
+
+vdecl_list:
+    /* nothing */    { [] }
+    | vdecl_list vdecl { $2 :: $1 }
+
+vdecl:
+    TYPE id_list NEWLINE { Vdecl($1, $2, Noexpr) }
+    /*| expr PIPE TYPE ID NEWLINE { Vdecl($3, $4, $1) }*/
 
 id_list:
     ID { [$1] }
@@ -89,7 +100,7 @@ expr:
     | LINT                      { Lint($1) }
     | LBOOL                      { Lbool($1) }
     | ID                        { Id($1) }
-    | LSQR expr_list RSQR       { Llist($1) }
+    | LSQR expr_list RSQR       { Llist($2) }
     | expr PLUS   expr   { Binop($1, Add,   $3) }
     | expr MINUS  expr   { Binop($1, Sub,   $3) }
     | expr TIMES  expr   { Binop($1, Mult,  $3) }
@@ -104,7 +115,7 @@ expr:
     | expr OR     expr   { Binop($1, Or,    $3) }
     | MINUS       expr   { Unop(Neg, $2) }
     | NOT expr           { Unop(Not, $2) }
-    | expr PIPE ID     { Assign($3, $1) }
+    | expr PIPE ID       { Assign($3, $1) }
     | expr LSQR expr RSQR       { Getn($1, $3) }
     | ID LPAR args_opt RPAR     { Call($1, $3) }
     | LPAR expr RPAR            { $2 }

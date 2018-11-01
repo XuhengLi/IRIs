@@ -32,13 +32,16 @@ type token =
   | NOT
   | EOF
   | PIPE
+  | INT
+  | FLOAT
+  | BOOL
+  | STRING
   | RETURN
-  | TYPE of (string)
+  | LSTR of (string)
   | ID of (string)
-  | STRING of (string)
-  | INT of (int)
-  | FLOAT of (float)
-  | BOOL of (bool)
+  | LFLT of (string)
+  | LINT of (int)
+  | LBOOL of (bool)
 
 val program :
   (Lexing.lexbuf  -> token) -> Lexing.lexbuf -> Ast.program
