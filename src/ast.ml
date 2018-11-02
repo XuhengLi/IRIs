@@ -3,9 +3,10 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Float | String
+type typ = Int | Bool | Float | String | List of typ
 
-type bind = typ * string
+type bind = typ * string list
+type fbind = typ * string
 
 type expr =
     Lint of int
@@ -18,6 +19,7 @@ type expr =
   | Unop of uop * expr
   | Assign of string * expr
   | Call of string * expr list
+  | Getn of expr * expr
   | Noexpr
 
 type stmt =
@@ -30,10 +32,12 @@ type stmt =
 type func_decl = {
     typ : typ;
     fname : string;
-    formals : bind list;
+    formals : fbind list;
     locals : bind list;
     body : stmt list;
   }
+
+type program = bind list * func_decl list
 
 (* Pretty-printing functions *)
 
@@ -70,6 +74,7 @@ let rec string_of_expr = function
   | Noexpr -> ""
   | Lstring(s) -> ""
   | Llist(l) -> ""
+  | Getn(e1,e2) -> ""
 
 let rec string_of_stmt = function
     Block(stmts) ->
@@ -81,13 +86,18 @@ let rec string_of_stmt = function
       string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 
-let string_of_typ = function
+let rec string_of_typ = function
     Int -> "int"
   | Bool -> "bool"
   | Float -> "float"
   | String -> "string"
+  | List(t) -> string_of_typ t ^ "[]"
 
-let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
+let rec string_of_idlist = function
+  [] -> ""
+  | hd::tl -> hd ^ string_of_idlist tl
+
+let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ string_of_idlist id ^ ";\n"
 
 let string_of_fdecl fdecl =
   string_of_typ fdecl.typ ^ " " ^

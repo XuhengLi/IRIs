@@ -15,6 +15,9 @@ open Ast
 %token <int> LINT
 %token <bool> LBOOL
 
+%start program
+%type <Ast.program> program
+
 %nonassoc ELSE
 %left PIPE
 %left OR
@@ -26,8 +29,6 @@ open Ast
 %right NOT
 %left LSQR RSRQ
 
-%start program
-%type <Ast.program> program
 %%
 
 /* functions are */
@@ -41,7 +42,7 @@ fdecl:
     TYPE ID LPAR param RPAR vdecl_list stmt_list ENDFUN
     { { typ = $1;
         fname = $2;
-        formals = List.rev $4
+        formals = List.rev $4;
         locals = List.rev $6;
         body = List.rev $7 } }
 
@@ -50,8 +51,8 @@ param:
     | param_list    { $1 }
 
 param_list:
-    TYPE ID                      {[($1, $2)]}
-    | TYPE ID COMMA param_list   {($1, $2) :: $4}
+    TYPE ID                     { [($1, $2)] }
+    | param_list COMMA TYPE ID  { ($3, $4) :: $1 }
 
 TYPE:
     basic_type          { $1 }
@@ -87,7 +88,7 @@ vdecl:
     /*| expr PIPE TYPE ID NEWLINE { Vdecl($3, $4, $1) }*/
 
 id_list:
-    ID { [$1] }
+    /*nothing*/ { [] }
     | ID COMMA id_list { $1 :: $3 }
 
 expr_list:

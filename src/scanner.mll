@@ -1,4 +1,4 @@
-{open Parser}
+{ open Parser }
 
 rule token =
     parse [' ' '\t' '\r']       { token lexbuf }  (* whitespace *)
@@ -6,10 +6,15 @@ rule token =
     | "/*"                      { comment lexbuf }(* start comment *)
     (* operators*)
     | '+'                       { PLUS }
+    | "|+"                      { PLUS }
     | '-'                       { MINUS }
+    | "|-"                      { MINUS }
     | '*'                       { TIMES }
+    | "|*"                      { TIMES }
     | '/'                       { DIVIDE}
+    | "|/"                      { DIVIDE}
     | '%'                       { MOD }
+    | "|%"                      { MOD }
     (* pipe *)
     | '|'                       { PIPE }
     (* parathen *)
@@ -28,7 +33,7 @@ rule token =
     | "||"                      { OR }
     | "&&"                      { AND }
     | '!'                       { NOT }
-    | ("true"|"false") as bl    { LITBOOL(bool_of_string bl) }
+    | ("true"|"false") as bl    { LBOOL(bool_of_string bl) }
     (* num *)
     | ['0' - '9']+ as lit       { LINT(int_of_string lit) }
     | ['0' - '9']*'.'['0' - '9']+ as lit  { LFLT(lit) }
