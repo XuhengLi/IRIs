@@ -33,9 +33,12 @@ open Ast
 
 /* functions are */
 program:
+  decls EOF { $1 }
+
+decls:
     { [], [] }
-    | program vdecl    { ($2 :: fst $1), snd $1 }
-    | program fdecl    { fst $1, ($2 :: snd $1) }
+    | decls vdecl    { ($2 :: fst $1), snd $1 }
+    | decls fdecl    { fst $1, ($2 :: snd $1) }
 
 /* start of decls */
 fdecl:

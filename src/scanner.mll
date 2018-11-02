@@ -38,11 +38,6 @@ rule token =
     | ['0' - '9']+ as lit       { LINT(int_of_string lit) }
     | ['0' - '9']*'.'['0' - '9']+ as lit  { LFLT(lit) }
     | ['0' - '9']+'.'['0' - '9']* as lit  { LFLT(lit) }
-    (* String *)
-    | '"'((['\000' - '\033' '\035' - '\127']|"\\\"")* as str)'"' { LSTR(str) }
-    (* ID *)
-    | ['a' - 'z' 'A' - 'Z']['a' - 'z' 'A' - 'Z' '0' - '9' '_']* as id { ID(id) }
-    | _ as ch { raise (Failure("invalid character detected" ^ Char.escaped ch)) }
     (* key words *)
     | "int"                     { INT }
     | "float"                   { FLOAT }
@@ -59,5 +54,10 @@ rule token =
     | "break"                   { BREAK }
     | "Siri"                    { ENDFUN }
     | eof                       { EOF }
+    (* String *)
+    | '"'((['\000' - '\033' '\035' - '\127']|"\\\"")* as str)'"' { LSTR(str) }
+    (* ID *)
+    | ['a' - 'z' 'A' - 'Z']['a' - 'z' 'A' - 'Z' '0' - '9' '_']* as id { ID(id) }
+    | _ as ch { raise (Failure("invalid character detected " ^ Char.escaped ch)) }
     and comment = parse "*/" {token lexbuf} (* end comment *)
     | _ {comment lexbuf}
