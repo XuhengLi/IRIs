@@ -433,7 +433,7 @@ let yyact = [|
 # 42 "parser.mly"
     ( { typ = _1;
         fname = _2;
-        formals = List.rev _4
+        formals = List.rev _4;
         locals = List.rev _6;
         body = List.rev _7 } )
 # 440 "parser.ml"
