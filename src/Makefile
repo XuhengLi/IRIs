@@ -7,4 +7,4 @@ iris.native:
 .PHONY : clean
 clean :
 	ocamlbuild -clean
-	rm -rf testall.log ocamlllvm *.diff
+	rm -rf testall.log ocamlllvm *.diff parser.ml parser.mli

@@ -103,7 +103,7 @@ expr:
       LSTR                      { Lstring($1) }
     | LFLT                      { Lfloat($1) }
     | LINT                      { Lint($1) }
-    | LBOOL                      { Lbool($1) }
+    | LBOOL                     { Lbool($1) }
     | ID                        { Id($1) }
     | LSQR expr_list RSQR       { Llist($2) }
     | expr PLUS   expr   { Binop($1, Add,   $3) }

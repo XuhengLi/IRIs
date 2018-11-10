@@ -1,1 +1,2 @@
-int a() Siri
+int a() print("aaa")
+Siri

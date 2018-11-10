@@ -55,7 +55,7 @@ rule token =
     | "Siri"                    { ENDFUN }
     | eof                       { EOF }
     (* String *)
-    | '"'((['\000' - '\033' '\035' - '\127']|"\\\"")* as str)'"' { LSTR(str) }
+    | '"' (([^ '"'] | "\\\"")* as strlit) '"' { LSTR(strlit) } 
     (* ID *)
     | ['a' - 'z' 'A' - 'Z']['a' - 'z' 'A' - 'Z' '0' - '9' '_']* as id { ID(id) }
     | _ as ch { raise (Failure("invalid character detected " ^ Char.escaped ch)) }
