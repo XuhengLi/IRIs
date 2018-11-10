@@ -20,7 +20,6 @@ type expr =
   | Assign of string * expr
   | Call of string * expr list
   | Getn of expr * expr
-  | Noexpr
 
 type stmt =
     Block of stmt list
