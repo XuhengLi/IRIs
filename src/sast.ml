@@ -7,6 +7,7 @@ and sx =
     SLint of int
   | SLfloat of string
   | SLbool of bool
+  | SLstring of string
   | SId of string
   | SBinop of sexpr * op * sexpr
   | SUnop of uop * sexpr

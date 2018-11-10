@@ -92,7 +92,7 @@ let check (globals, functions) =
                  Lint  l -> (Int, SLint l)
                | Lfloat l -> (Float, SLfloat l)
                | Lbool l  -> (Bool, SLbool l)
-               | Lstring s -> (String, Sstring, s)
+               | Lstring s -> (String, SLstring, s)
                | Id s       -> (type_of_identifier s, SId s)
                | Llist s -> check_all_list_literal s (list_type s) 0
                | Assign(var, e) as ex ->
