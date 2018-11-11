@@ -1,4 +1,5 @@
 open Ast
+open Sast
 
 module StringMap = Map.Make(String)
 let check (globals, functions) =
@@ -24,7 +25,7 @@ let check (globals, functions) =
           fname = name;
           formals = [(ty, "x")];
           locals = []; body = [] } map
-        in List.fold_left add_bind StringMap.empty [ ("print", Int);
+        in List.fold_left add_bind StringMap.empty [ ("print", String);
         		                         (*add built-in function here*)]
         in
         (* Add function name to symbol table *)
@@ -72,19 +73,19 @@ let check (globals, functions) =
            | _ -> raise (Failure ("illegal list access") )
            in
            let list_type s = match (List.hd s) with
-             | Lint _ -> SList(Int, List.length s)
-             | Lfloat _ -> SList(Float, List.length s)
-             | Lbool _ -> SList(Bool, List.length s)
-             | (* nested list *)
+             | Lint _ -> List(Int)
+             | Lfloat _ -> List(Float)
+             | Lbool _ -> List(Bool)
+             (* TODO | (* nested list *) *)
              | _ -> raise ( Failure ("Cannot instantiate a list of that type")) in
 
            let rec check_all_list_literal m ty idx =
              let length = List.length m in
              match (ty, List.nth m idx) with
-               (List(Int, _), Lint _) -> if idx == length - 1 then List(Int, length) else check_all_list_literal m (List(Int, length)) (succ idx)
-             | (List(Float, _), Lfloat _) -> if idx == length - 1 then List(Float, length) else check_all_list_literal m (List(Float, length)) (succ idx)
-             | (List(Bool, _), Lbool _) -> if idx == length - 1 then List(Bool, length) else check_all_list_literal m (List(Bool, length)) (succ idx)
-             | (* nested list *)
+               (List(Int), Lint _) -> if idx == length - 1 then Int else check_all_list_literal m (List(Int)) (succ idx)
+             | (List(Float), Lfloat _) -> if idx == length - 1 then Float else check_all_list_literal m (List(Float)) (succ idx)
+             | (List(Bool), Lbool _) -> if idx == length - 1 then Bool else check_all_list_literal m (List(Bool)) (succ idx)
+             (* TODO | (* nested list *) *)
              | _ -> raise (Failure ("illegal list literal"))
            in
            (* Return a semantically-checked expression, i.e., with a type *)
@@ -92,9 +93,9 @@ let check (globals, functions) =
                  Lint  l -> (Int, SLint l)
                | Lfloat l -> (Float, SLfloat l)
                | Lbool l  -> (Bool, SLbool l)
-               | Lstring s -> (String, SLstring, s)
+               | Lstring s -> (String, SLstring s)
                | Id s       -> (type_of_identifier s, SId s)
-               | Llist s -> check_all_list_literal s (list_type s) 0
+               | Llist s -> ((check_all_list_literal s (list_type s) 0), SLlist s)
                | Assign(var, e) as ex ->
                      let lt = type_of_identifier var
                      and (rt, e') = expr e in
@@ -104,7 +105,7 @@ let check (globals, functions) =
                | Getn(s, e1) -> let _ = (match (expr e1) with
                                      (Int, SLint l) -> (Int, SLint l)
                                     | _ -> raise (Failure ("attempting to access with a non-integer type"))) in
-                                    list_access_type (type_of_identifier s)
+                                    (list_access_type (type_of_identifier s), snd (expr e1))
                | Unop(op, e) as ex ->
                   let (t, e') = expr e in
                   let ty = match op with
@@ -132,6 +133,27 @@ let check (globals, functions) =
                                 string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                                 string_of_typ t2 ^ " in " ^ string_of_expr e))
                    in (ty, SBinop((t1, e1'), op, (t2, e2')))
+                   | Call(fname, args) as call ->
+                let fd = find_func fname in
+                let param_length = List.length fd.formals in
+                if List.length args != param_length then
+                  raise (Failure ("expecting " ^ string_of_int param_length ^
+                                  " arguments in " ^ string_of_expr call))
+                else let check_call (ft, _) e =
+                  let (et, e') = expr e in
+                  let err = "illegal argument found " ^ string_of_typ et ^
+                    " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
+                  in (check_assign ft et err, e')
+                in
+                let args' = List.map2 check_call fd.formals args
+                in (fd.typ, SCall(fname, args'))
+          in
+
+          let check_bool_expr e =
+            let (t', e') = expr e
+            and err = "expected Boolean expression in " ^ string_of_expr e
+            in if t' != Bool then raise (Failure err) else (t', e')
+          in
     (* Return a semantically-checked statement i.e. containing sexprs *)
        let rec check_stmt = function
            Expr e -> SExpr (expr e)

@@ -37,17 +37,17 @@ program:
 
 decls:
     { [], [] }
-    | decls vdecl    { ($2 :: fst $1), snd $1 }
-    | decls fdecl    { fst $1, ($2 :: snd $1) }
+    | decls vdecl NEWLINE         { ($2 @ fst $1), snd $1 }
+    | decls fdecl NEWLINE         { fst $1, ($2 :: snd $1) }
 
 /* start of decls */
 fdecl:
-    TYPE ID LPAR param RPAR vdecl_list stmt_list ENDFUN
+    TYPE ID LPAR param RPAR NEWLINE vdecl_list stmt_list ENDFUN
     { { typ = $1;
         fname = $2;
         formals = List.rev $4;
-        locals = List.rev $6;
-        body = List.rev $7 } }
+        locals = List.rev $7;
+        body = List.rev $8 } }
 
 param:
                     { [] }
@@ -84,14 +84,16 @@ stmt:
 
 vdecl_list:
     /* nothing */    { [] }
-    | vdecl_list vdecl { $2 :: $1 }
+    | vdecl_list vdecl { List.append $2 $1 }
 
+/* TODO: Modify TYPE id_list return value */
 vdecl:
-    TYPE id_list NEWLINE { $1, $2 }
+    /* TYPE id_list NEWLINE { $1, $2 } */
+    TYPE id_list NEWLINE { List.map (fun id -> ($1, id)) $2}
     /*| expr PIPE TYPE ID NEWLINE { Vdecl($3, $4, $1) }*/
 
 id_list:
-    /*nothing*/ { [] }
+    | ID { [$1] }
     | ID COMMA id_list { $1 :: $3 }
 
 expr_list:
@@ -121,7 +123,7 @@ expr:
     | MINUS       expr   { Unop(Neg, $2) }
     | NOT expr           { Unop(Not, $2) }
     | expr PIPE ID       { Assign($3, $1) }
-    | expr LSQR expr RSQR       { Getn($1, $3) }
+    | ID LSQR expr RSQR       { Getn($1, $3) }
     | ID LPAR args_opt RPAR     { Call($1, $3) }
     | LPAR expr RPAR            { $2 }
 

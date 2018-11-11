@@ -1,2 +1,5 @@
-int a() print("aaa")
+int main()
+    string str
+    "Hello World"|str
+    print(str)
 Siri

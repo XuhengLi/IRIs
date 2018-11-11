@@ -5,8 +5,7 @@ type uop = Neg | Not
 
 type typ = Int | Bool | Float | String | List of typ
 
-type bind = typ * string list
-type fbind = typ * string
+type bind = typ * string
 
 type expr =
     Lint of int
@@ -19,7 +18,7 @@ type expr =
   | Unop of uop * expr
   | Assign of string * expr
   | Call of string * expr list
-  | Getn of expr * expr
+  | Getn of string * expr
 
 type stmt =
     Block of stmt list
@@ -31,7 +30,7 @@ type stmt =
 type func_decl = {
     typ : typ;
     fname : string;
-    formals : fbind list;
+    formals : bind list;
     locals : bind list;
     body : stmt list;
   }
@@ -70,10 +69,10 @@ let rec string_of_expr = function
   | Assign(v, e) -> string_of_expr e ^ " | " ^ v
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
-  | Noexpr -> ""
+  (* | Noexpr -> "" *)
   | Lstring(s) -> s
-  | Llist(l) -> ""
-  | Getn(e1,e2) -> ""
+  | Llist(l) -> "[" ^ String.concat ", " (List.map string_of_expr l) ^ "]"
+  | Getn(e1,e2) -> e1 ^ "[" ^ string_of_expr e2 ^ "]"
 
 let rec string_of_stmt = function
     Block(stmts) ->
@@ -92,19 +91,15 @@ let rec string_of_typ = function
   | String -> "string"
   | List(t) -> string_of_typ t ^ "[]"
 
-let rec string_of_idlist = function
-  [] -> ""
-  | hd::tl -> hd ^ string_of_idlist tl
-
-let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ string_of_idlist id ^ ";\n"
+let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 
 let string_of_fdecl fdecl =
   string_of_typ fdecl.typ ^ " " ^
   fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
-  ")\n{\n" ^
+  ")\n" ^
   String.concat "" (List.map string_of_vdecl fdecl.locals) ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
-  "}\n"
+  "Siri\n"
 
 let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
