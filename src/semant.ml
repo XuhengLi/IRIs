@@ -82,9 +82,9 @@ let check (globals, functions) =
            let rec check_all_list_literal m ty idx =
              let length = List.length m in
              match (ty, List.nth m idx) with
-               (List(Int), Lint _) -> if idx == length - 1 then Int else check_all_list_literal m (List(Int)) (succ idx)
-             | (List(Float), Lfloat _) -> if idx == length - 1 then Float else check_all_list_literal m (List(Float)) (succ idx)
-             | (List(Bool), Lbool _) -> if idx == length - 1 then Bool else check_all_list_literal m (List(Bool)) (succ idx)
+               (List(Int), Lint _) -> if idx == length - 1 then List(Int) else check_all_list_literal m (List(Int)) (succ idx)
+             | (List(Float), Lfloat _) -> if idx == length - 1 then List(Float) else check_all_list_literal m (List(Float)) (succ idx)
+             | (List(Bool), Lbool _) -> if idx == length - 1 then List(Bool) else check_all_list_literal m (List(Bool)) (succ idx)
              (* TODO | (* nested list *) *)
              | _ -> raise (Failure ("illegal list literal"))
            in

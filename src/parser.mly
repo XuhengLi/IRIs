@@ -93,11 +93,11 @@ vdecl:
     /*| expr PIPE TYPE ID NEWLINE { Vdecl($3, $4, $1) }*/
 
 id_list:
-    | ID { [$1] }
+     ID { [$1] }
     | ID COMMA id_list { $1 :: $3 }
 
 expr_list:
-    | expr { [$1] }
+     expr { [$1] }
     | expr COMMA expr_list { $1 :: $3 }
 
 
