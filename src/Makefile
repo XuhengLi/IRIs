@@ -1,6 +1,8 @@
 iris.native:
 	opam config exec -- \
-	ocamlbuild -use-ocamlfind iris.native
+	ocamlbuild -use-ocamlfind -pkg llvm -package llvm.analysis iris.native 
+
+
 
 # "make clean" removes all generated files
 
