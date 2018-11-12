@@ -8,3 +8,8 @@ iris.native:
 clean :
 	ocamlbuild -clean
 	rm -rf testall.log ocamlllvm *.diff parser.ml parser.mli
+
+.PHONY : clean
+debug:
+	opam config exec -- \
+	ocamlbuild -use-ocamlfind iris.d.byte
