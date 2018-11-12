@@ -1,8 +1,6 @@
 iris.native:
 	opam config exec -- \
-	ocamlbuild -use-ocamlfind -pkg llvm -package llvm.analysis iris.native 
-
-
+	ocamlbuild -use-ocamlfind -pkg llvm -package llvm.analysis iris.native
 
 # "make clean" removes all generated files
 
@@ -11,7 +9,7 @@ clean :
 	ocamlbuild -clean
 	rm -rf testall.log ocamlllvm *.diff parser.ml parser.mli
 
-.PHONY : clean
+.PHONY : debug
 debug:
 	opam config exec -- \
-	ocamlbuild -use-ocamlfind iris.d.byte
+	ocamlbuild -use-ocamlfind -pkg llvm -package llvm.analysis iris.d.byte

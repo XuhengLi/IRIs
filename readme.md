@@ -1,4 +1,4 @@
-# IRIs 
+# IRIs
 
 ## UNIs
 xl2784 <br />
@@ -173,3 +173,7 @@ ShowResult("Go to the store and buy some more, 99 bottles of beer on the wall.")
 
 GoodbyeSiri
 ```
+
+## TODOs:
+
+Add clarifications about naming scope rules
