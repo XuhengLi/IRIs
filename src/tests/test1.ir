@@ -1,5 +1,3 @@
 int main()
-    string str
-    "Hello World"|str
-    print(str)
+    print("Hello world")
 Siri
