@@ -1,0 +1,9 @@
+int main()
+    int a, b, c
+    2|a
+    3|b
+    a|+b|c
+    printi(c)
+    printi(b)
+    printi(a)
+Siri

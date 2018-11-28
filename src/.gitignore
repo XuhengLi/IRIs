@@ -1,3 +1,4 @@
+# build generate files
 *.annot
 *.cmo
 *.cma
@@ -9,6 +10,8 @@
 *.cmxa
 *.mli
 parser.ml
+scanner.ml
+*.output
 
 # ocamlbuild working directory
 _build/
@@ -23,3 +26,6 @@ setup.log
 
 # Merlin configuring file for Vim and Emacs
 .merlin
+
+# macOS system file
+.DS_Store
