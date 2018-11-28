@@ -67,7 +67,7 @@ let rec string_of_sstmt = function
   | SIf(e, s1, s2) ->  "if (" ^ string_of_sexpr e ^ ")\n" ^
       string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
   | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
-  | SSetn(s, e1, e2) -> string_of_expr e2 ^ " | " ^ s ^ "[" ^ string_of_expr e1 ^"]"
+  | SSetn(s, e1, e2) -> string_of_sexpr e2 ^ " | " ^ s ^ "[" ^ string_of_sexpr e1 ^"]"
 
 let string_of_sfdecl fdecl =
   string_of_typ fdecl.styp ^ " " ^
