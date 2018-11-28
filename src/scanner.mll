@@ -3,7 +3,6 @@
 rule token =
     parse [' ' '\t' '\r']       { token lexbuf }  (* whitespace *)
     | [' ' '\t' '\r' '\n']*'|'[' ' '\t' '\r' '\n']* { PIPE }
-    | ['\n']*                   { NEWLINE }
     | "/*"                      { comment lexbuf }(* start comment *)
     (* operators*)
     | '+'
@@ -16,8 +15,7 @@ rule token =
     | [' ' '\t' '\r' '\n']*'|'[' ' '\t' '\r' '\n']*'/'                    { DIVIDE}
     | '%'
     | [' ' '\t' '\r' '\n']*'|'[' ' '\t' '\r' '\n']*'%'                     { MOD }
-    (* pipe *)
-    | '|'                       { PIPE }
+    | ['\n']+                   { NEWLINE }
     (* parathen *)
     | '['                       { LSQR }
     | ']'                       { RSQR }

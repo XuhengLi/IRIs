@@ -13,3 +13,11 @@ clean :
 debug:
 	opam config exec -- \
 	ocamlbuild -use-ocamlfind -pkg llvm -package llvm.analysis iris.d.byte
+
+.PHONY : prettyp
+parser:
+	ocamllex scanner.mll
+	ocamlyacc parser.mly
+	ocamlc -c ast.mli
+	ocamlc -c parser.mli
+	ocamlc -c scanner.ml
