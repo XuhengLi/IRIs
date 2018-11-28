@@ -12,13 +12,14 @@ type expr =
   | Lfloat of string
   | Lbool of bool
   | Lstring of string
-  | Llist of expr list
   | Id of string
   | Binop of expr * op * expr
   | Unop of uop * expr
   | Assign of string * expr
   | Call of string * expr list
   | Getn of string * expr
+  | Llist of expr list
+  | LlistAccess of string * expr
 
 type stmt =
     Block of stmt list
@@ -26,7 +27,9 @@ type stmt =
   | Return of expr
   | If of expr * stmt * stmt
   | While of expr * stmt
-
+  (* list *)
+  | ListReplace of string * expr * expr
+  
 type func_decl = {
     typ : typ;
     fname : string;
