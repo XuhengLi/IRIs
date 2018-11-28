@@ -80,6 +80,7 @@ stmt:
     | RETURN expr NEWLINE                       { Return($2) }
     | IF LPAR expr RPAR stmt ELSE stmt ENDIF    { If($3, $5, $7) }
     | WHILE LPAR expr RPAR stmt ENDLOOP         { While($3, $5) }
+    | expr PIPE ID LSQR expr RSRQ { Setn($3, $5, $1) }
     /*| LPAR expr_list RPAR PIPE TYPE id_list NEWLINE { VarMulDecl($2, $5, $6)}*/
 
 vdecl_list:
@@ -123,7 +124,7 @@ expr:
     | MINUS       expr   { Unop(Neg, $2) }
     | NOT expr           { Unop(Not, $2) }
     | expr PIPE ID       { Assign($3, $1) }
-    | ID LSQR expr RSQR       { Getn($1, $3) }
+    | ID LSQR expr RSQR         { Getn($1, $3) }
     | ID LPAR args_opt RPAR     { Call($1, $3) }
     | LPAR expr RPAR            { $2 }
 
