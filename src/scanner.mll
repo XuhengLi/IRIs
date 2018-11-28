@@ -2,19 +2,20 @@
 
 rule token =
     parse [' ' '\t' '\r']       { token lexbuf }  (* whitespace *)
-    | '\n'                      { NEWLINE }
+    | [' ' '\t' '\r' '\n']*'|'[' ' '\t' '\r' '\n']* { PIPE }
+    | ['\n']*                   { NEWLINE }
     | "/*"                      { comment lexbuf }(* start comment *)
     (* operators*)
-    | '+'                       { PLUS }
-    | "|+"                      { PLUS }
-    | '-'                       { MINUS }
-    | "|-"                      { MINUS }
-    | '*'                       { TIMES }
-    | "|*"                      { TIMES }
-    | '/'                       { DIVIDE}
-    | "|/"                      { DIVIDE}
-    | '%'                       { MOD }
-    | "|%"                      { MOD }
+    | '+'
+    | [' ' '\t' '\r' '\n']*'|'[' ' '\t' '\r' '\n']*'+'                    { PLUS }
+    | '-'
+    | [' ' '\t' '\r' '\n']*'|'[' ' '\t' '\r' '\n']*'-'                    { MINUS }
+    | '*'
+    | [' ' '\t' '\r' '\n']*'|'[' ' '\t' '\r' '\n']*'*'                    { TIMES }
+    | '/'
+    | [' ' '\t' '\r' '\n']*'|'[' ' '\t' '\r' '\n']*'/'                    { DIVIDE}
+    | '%'
+    | [' ' '\t' '\r' '\n']*'|'[' ' '\t' '\r' '\n']*'%'                     { MOD }
     (* pipe *)
     | '|'                       { PIPE }
     (* parathen *)
@@ -55,8 +56,9 @@ rule token =
     | "Siri"                    { ENDFUN }
     | eof                       { EOF }
     (* String *)
-    | '"'                       { let buffer = Buffer.create 1
-                                  in LSTR(str_of_string buffer lexbuf)
+    | '"'                       {
+                                    let buffer = Buffer.create 1
+                                    in LSTR(str_of_string buffer lexbuf)
                                 }
     (* ID *)
     | ['a' - 'z' 'A' - 'Z']['a' - 'z' 'A' - 'Z' '0' - '9' '_']* as id { ID(id) }
