@@ -109,7 +109,7 @@ let check (globals, functions) =
       | Getn(s, e1) -> let _ = (match (expr e1) with
                            (Int, SLint l) -> (Int, SLint l)
                           | _ -> raise (Failure ("attempting to access with a non-integer type"))) in
-                          (list_access_type (type_of_identifier s), snd (expr e1))
+                          ((list_type s), SGetn(s snd (expr e1)) )
       | Unop(op, e) as ex ->
         let (t, e') = expr e
         in
@@ -186,7 +186,13 @@ let check (globals, functions) =
            | s :: ss         -> check_stmt s :: check_stmt_list ss
            | []              -> []
          in SBlock(check_stmt_list sl)
-
+      | Setn(s, e1, e2) -> let _ = (match (expr e1) with
+                           (Int, SLint l) -> (Int, SLint l)
+                          | _ -> raise (Failure ("attempting to access with a non-integer type"))) in
+                          let _ = match snd (expr e2) with
+                            (list_type s) -> t
+                            | _ -> raise (Failure "assign type is not compatible with the list type") in
+                          SSetn(s, snd (expr e1), snd (expr e2))
     in (* body of check_function *)
     {
       styp = func.typ;

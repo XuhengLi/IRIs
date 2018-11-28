@@ -24,7 +24,7 @@ type sstmt =
   | SReturn of sexpr
   | SIf of sexpr * sstmt * sstmt
   | SWhile of sexpr * sstmt
-  | SSetn of string * expr * expr
+  | SSetn of string * sexpr * sexpr
 
 type sfunc_decl = {
     styp : typ;

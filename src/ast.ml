@@ -17,8 +17,8 @@ type expr =
   | Unop of uop * expr
   | Assign of string * expr
   | Call of string * expr list
-  | Getn of string * expr
   | Llist of expr list
+  | Getn of string * expr
 
 type stmt =
     Block of stmt list
@@ -28,7 +28,7 @@ type stmt =
   | While of expr * stmt
   (* list *)
   | Setn of string * expr * expr
-  
+
 type func_decl = {
     typ : typ;
     fname : string;
@@ -85,7 +85,7 @@ let rec string_of_stmt = function
   | If(e, s1, s2) ->  "if (" ^ string_of_expr e ^ ")\n" ^
       string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-  | Setn(s, e1, e2) -> string_of_expr e2 ^ " | " ^ s ^ "[" ^ string_of_expr e1 ^"]"
+  | Setn(s, e1, e2) -> s ^ "[" ^ string_of_expr e1 ^ "] = " ^ string_of_expr e2
 
 let rec string_of_typ = function
     Int -> "int"
