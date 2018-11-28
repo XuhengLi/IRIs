@@ -26,6 +26,7 @@ let check (globals, functions) =
       formals = [(ty, "x")];
       locals = []; body = [] } map
     in List.fold_left add_bind StringMap.empty [ ("print", String);
+                                                 ("printi", Int);
     		                         (*add built-in function here*)]
   in
     (* Add function name to symbol table *)

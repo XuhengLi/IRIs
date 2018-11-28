@@ -19,7 +19,6 @@ type expr =
   | Call of string * expr list
   | Getn of string * expr
   | Llist of expr list
-  | LlistAccess of string * expr
 
 type stmt =
     Block of stmt list
@@ -28,7 +27,7 @@ type stmt =
   | If of expr * stmt * stmt
   | While of expr * stmt
   (* list *)
-  | ListReplace of string * expr * expr
+  | Setn of string * expr * expr
   
 type func_decl = {
     typ : typ;

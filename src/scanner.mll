@@ -55,9 +55,20 @@ rule token =
     | "Siri"                    { ENDFUN }
     | eof                       { EOF }
     (* String *)
-    | '"' (([^ '"'] | "\\\"")* as strlit) '"' { LSTR(strlit) } 
+    | '"'                       { let buffer = Buffer.create 1
+                                  in LSTR(str_of_string buffer lexbuf)
+                                }
     (* ID *)
     | ['a' - 'z' 'A' - 'Z']['a' - 'z' 'A' - 'Z' '0' - '9' '_']* as id { ID(id) }
     | _ as ch { raise (Failure("invalid character detected " ^ Char.escaped ch)) }
-    and comment = parse "*/" {token lexbuf} (* end comment *)
-    | _ {comment lexbuf}
+    and comment =
+    parse "*/" { token lexbuf } (* end comment *)
+    | _ { comment lexbuf }
+    and str_of_string buffer =  (* can be more functional *)
+    parse '"' { Buffer.contents buffer}
+    | "\\t"   { Buffer.add_char buffer '\t'; str_of_string buffer lexbuf }
+    | "\\n"   { Buffer.add_char buffer '\n'; str_of_string buffer lexbuf }
+    | "\\\""  { Buffer.add_char buffer '"'; str_of_string buffer lexbuf }
+    | "\\\\"  { Buffer.add_char buffer '\\'; str_of_string buffer lexbuf }
+    | _ as ch { Buffer.add_char buffer ch; str_of_string buffer lexbuf }
+    (* ref:https://stackoverflow.com/questions/5793702/using-ocamllex-for-lexing-strings-the-tiger-compiler *)
