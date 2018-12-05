@@ -31,6 +31,8 @@ let check (globals, functions) =
         (Int, "printb", [(Bool, "x")]);
         (Int, "strlen", [(String, "x")]);
         (Int, "strcmp", [(String, "x");(String, "x1")]);
+        (String, "strcat", [(String, "x1");(String, "x2")]);
+        (String, "strcpy", [(String, "x");(String, "x1")]);
         (*add built-in function here*)]
   in
     (* Add function name to symbol table *)

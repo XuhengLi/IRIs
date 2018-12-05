@@ -92,27 +92,22 @@ let translate (globals, functions) =
   let strcmp_func : L.llvalue =
       L.declare_function "strcmp" strcmp_t the_module
   in
-(*   (* Declare the built-in strcat() function *)
+  (* Declare the built-in strcat() function *)
   let strcat_t : L.lltype =
-      L.function_type p_t [| p_t; p_t|]
+      L.function_type str_t [| str_t; str_t|]
   in
+
   let strcat_func : L.llvalue =
       L.declare_function "strcat" strcat_t the_module
   in
+
   (* Declare the built-in strcpy() function *)
   let strcpy_t : L.lltype =
-      L.function_type p_t [| p_t; p_t|]
+      L.function_type str_t [| str_t; str_t|]
   in
   let strcpy_func : L.llvalue =
       L.declare_function "strcpy" strcpy_t the_module
   in
-  (* Declare the built-in strget() function *)
-  let strget_t : L.lltype =
-      L.function_type i8_t [| p_t; i32_t|]
-  in
-  let strget_func : L.llvalue =
-      L.declare_function "strget" strget_t the_module
-  in *)
 
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
@@ -246,6 +241,12 @@ let translate (globals, functions) =
             | SCall ("strcmp", [e1; e2]) ->
               L.build_call strcmp_func [|(expr builder e1); (expr builder e2)|]
               "strcmp" builder
+            | SCall ("strcat", [e1; e2]) ->
+              L.build_call strcat_func [|(expr builder e1); (expr builder e2)|]
+              "strcat" builder
+            | SCall ("strcpy", [e1; e2]) ->
+              L.build_call strcpy_func [|(expr builder e1); (expr builder e2)|]
+              "strcpy" builder
             | SCall (f, args) ->
               let (fdef, fdecl) = StringMap.find f function_decls
               in
