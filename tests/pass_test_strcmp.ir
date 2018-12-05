@@ -1,0 +1,21 @@
+int main()
+    int a
+    string str1, str2
+    "abcd"
+    |
+    str1
+    "abcd"
+    |
+    str2
+    strcmp(str1, str2)
+    |
+    a
+
+    printi(a)
+    print(str1)
+    print("\n")
+    print(str2)
+    print("\n")
+
+    return 0
+Siri

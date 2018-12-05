@@ -42,7 +42,8 @@ let translate (globals, functions) =
   (* Return the LLVM type for a MicroC type *)
   let ltype_of_typ = function
       A.Int   -> i32_t
-    | A.Bool  -> i1_t
+    (* TODO: Modify Bool type *)
+    | A.Bool  -> i8_t
     | A.Float -> float_t
     | A.String  -> str_t
     (* TODO: Add list type *)
@@ -64,7 +65,12 @@ let translate (globals, functions) =
   let printf_func : L.llvalue =
       L.declare_function "printf" printf_t the_module
   in
-
+  let printb_t : L.lltype =
+      L.var_arg_function_type i32_t [| L.pointer_type i1_t |]
+  in
+  let printb_func : L.llvalue =
+      L.declare_function "printf" printf_t the_module
+  in
   let printbig_t : L.lltype =
       L.function_type i32_t [| i32_t |]
   in
@@ -72,40 +78,42 @@ let translate (globals, functions) =
       L.declare_function "printbig" printbig_t the_module
   in
   (* Declare the built-in strlen() function  *)
-  let strlen_t =
-      L.function_type i32_t [| p_t |]
+  let strlen_t : L.lltype =
+      L.function_type i32_t [| str_t |]
   in
-  let strlen_func =
+  let strlen_func : L.llvalue =
       L.declare_function "strlen" strlen_t the_module
   in
+
   (* Declare the built-in strcmp() function *)
-  let strcmp_t =
-      L.function_type i32_t [| p_t; p_t|]
+  let strcmp_t : L.lltype =
+      L.function_type i32_t [| str_t; str_t|]
   in
-  let strcmp_func =
+  let strcmp_func : L.llvalue =
       L.declare_function "strcmp" strcmp_t the_module
   in
-  (* Declare the built-in strcat() function *)
-  let strcat_t =
+(*   (* Declare the built-in strcat() function *)
+  let strcat_t : L.lltype =
       L.function_type p_t [| p_t; p_t|]
   in
-  let strcat_func =
+  let strcat_func : L.llvalue =
       L.declare_function "strcat" strcat_t the_module
   in
   (* Declare the built-in strcpy() function *)
-  let strcpy_t =
+  let strcpy_t : L.lltype =
       L.function_type p_t [| p_t; p_t|]
   in
-  let strcpy_func =
+  let strcpy_func : L.llvalue =
       L.declare_function "strcpy" strcpy_t the_module
   in
   (* Declare the built-in strget() function *)
-  let strget_t =
+  let strget_t : L.lltype =
       L.function_type i8_t [| p_t; i32_t|]
   in
-  let strget_func =
+  let strget_func : L.llvalue =
       L.declare_function "strget" strget_t the_module
-  in
+  in *)
+
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
   let function_decls : (L.llvalue * sfunc_decl) StringMap.t =
@@ -168,7 +176,7 @@ let translate (globals, functions) =
     (* Construct code for an expression; return its value *)
     let rec expr builder ((_, e) : sexpr) = match e with
         SLint i  -> L.const_int i32_t i
-      | SLbool b  -> L.const_int i1_t (if b then 1 else 0)
+      | SLbool b  -> L.const_int i8_t (if b then 1 else 0)
       | SLfloat l -> L.const_float_of_string float_t l
       | SId s       -> L.build_load (lookup s) s builder
       | SLstring s -> build_string s builder
@@ -219,15 +227,25 @@ let translate (globals, functions) =
               A.Neg when t = A.Float -> L.build_fneg
             | A.Neg                  -> L.build_neg
             | A.Not                  -> L.build_not) e' "tmp" builder
-            | SCall ("print", [e]) | SCall ("printb", [e]) ->
+            | SCall ("print", [e]) ->
               L.build_call printf_func [|(expr builder e)|] "printf" builder
+            | SCall ("printb", [e]) ->
+              L.build_call printb_func [|int_format_str; (expr builder e)|]
+              "printf" builder
             | SCall ("printi", [e]) ->
-              L.build_call printf_func [|int_format_str ; (expr builder e)|] "printf" builder
+              L.build_call printf_func [|int_format_str ; (expr builder e)|]
+              "printf" builder
             | SCall ("printbig", [e]) ->
-              L.build_call printbig_func [| (expr builder e) |] "printbig" builder
+              L.build_call printbig_func [| (expr builder e) |]
+              "printbig" builder
             | SCall ("printf", [e]) ->
               L.build_call printf_func [| float_format_str ; (expr builder e) |]
               "printf" builder
+            | SCall ("strlen", [e]) ->
+              L.build_call strlen_func [|(expr builder e)|] "strlen" builder
+            | SCall ("strcmp", [e1; e2]) ->
+              L.build_call strcmp_func [|(expr builder e1); (expr builder e2)|]
+              "strcmp" builder
             | SCall (f, args) ->
               let (fdef, fdecl) = StringMap.find f function_decls
               in

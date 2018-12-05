@@ -1,0 +1,14 @@
+int main()
+    int a
+    string str
+    "abcd"
+    |
+    str
+    strlen(str)
+    |
+    a
+
+    printi(a)
+
+    return 0
+Siri
