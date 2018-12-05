@@ -18,6 +18,7 @@ open Ast
 %start program
 %type <Ast.program> program
 
+%nonassoc NOELSE
 %nonassoc ELSE
 %left PIPE
 %left OR
@@ -76,11 +77,12 @@ stmt_list:
     | stmt_list stmt {$2 :: $1}
 
 stmt:
-    | expr NEWLINE                              { Expr $1 }
-    | RETURN expr NEWLINE                       { Return($2) }
-    | IF LPAR expr RPAR stmt ELSE stmt ENDIF    { If($3, $5, $7) }
-    | WHILE LPAR expr RPAR stmt ENDLOOP         { While($3, $5) }
-    | expr PIPE ID LSQR expr RSQR NEWLINE       { Setn($3, $5, $1) }
+    | expr NEWLINE                                      { Expr $1 }
+    | RETURN expr NEWLINE                               { Return($2) }
+    | IF LPAR expr RPAR NEWLINE stmt %prec NOELSE ENDIF NEWLINE       { If($3, $6, Block([])) }
+    | IF LPAR expr RPAR NEWLINE stmt ELSE NEWLINE stmt ENDIF NEWLINE  { If($3, $6, $9) }
+    | WHILE LPAR expr RPAR NEWLINE stmt ENDLOOP NEWLINE               { While($3, $6) }
+    | expr PIPE ID LSQR expr RSQR NEWLINE                       { Setn($3, $5, $1) }
     /*| LPAR expr_list RPAR PIPE TYPE id_list NEWLINE { VarMulDecl($2, $5, $6)}*/
 
 vdecl_list:
