@@ -1,0 +1,10 @@
+int main()
+    string catedString
+    strcat("first ", "second\n")
+    |
+    catedString
+
+    print(catedString)
+
+    return 0
+Siri

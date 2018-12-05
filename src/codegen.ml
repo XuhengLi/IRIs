@@ -71,7 +71,41 @@ let translate (globals, functions) =
   let printbig_func : L.llvalue =
       L.declare_function "printbig" printbig_t the_module
   in
-
+  (* Declare the built-in strlen() function  *)
+  let strlen_t =
+      L.function_type i32_t [| p_t |]
+  in
+  let strlen_func =
+      L.declare_function "strlen" strlen_t the_module
+  in
+  (* Declare the built-in strcmp() function *)
+  let strcmp_t =
+      L.function_type i32_t [| p_t; p_t|]
+  in
+  let strcmp_func =
+      L.declare_function "strcmp" strcmp_t the_module
+  in
+  (* Declare the built-in strcat() function *)
+  let strcat_t =
+      L.function_type p_t [| p_t; p_t|]
+  in
+  let strcat_func =
+      L.declare_function "strcat" strcat_t the_module
+  in
+  (* Declare the built-in strcpy() function *)
+  let strcpy_t =
+      L.function_type p_t [| p_t; p_t|]
+  in
+  let strcpy_func =
+      L.declare_function "strcpy" strcpy_t the_module
+  in
+  (* Declare the built-in strget() function *)
+  let strget_t =
+      L.function_type i8_t [| p_t; i32_t|]
+  in
+  let strget_func =
+      L.declare_function "strget" strget_t the_module
+  in
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
   let function_decls : (L.llvalue * sfunc_decl) StringMap.t =
