@@ -1,0 +1,22 @@
+int main()
+    int a
+    3
+    |
+    a
+    if(a<5)
+        if(a<3)
+	    10
+	    |
+	    a
+        else
+            100
+            |
+            a
+        fi
+    else
+        1000
+        |
+        a
+    fi
+    printi(a)
+Siri

@@ -1,0 +1,23 @@
+int main()
+	int a,b,c
+	5
+	|
+	a
+
+
+	a+1
+	|
+	b
+
+	b+1
+	|
+	c
+
+	c-b
+	|
+	a
+
+	printi(a)
+	printi(b)
+	printi(c)
+Siri

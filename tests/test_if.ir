@@ -1,0 +1,12 @@
+int main()
+    int a
+    3
+    |
+    a
+    if(a<5)
+	10
+	|
+	a
+    fi
+    printi(a)
+Siri

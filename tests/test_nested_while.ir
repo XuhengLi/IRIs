@@ -1,0 +1,22 @@
+int main()
+    int a,b
+    1
+    |
+    a
+
+    2
+    |
+    b
+    while(a<5)
+        a+1
+        |
+        a
+	while(b<10)
+	    b+1
+	    |
+	    b
+	end
+    end
+    printi(a)
+    printi(b)
+Siri

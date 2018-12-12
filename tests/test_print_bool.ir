@@ -1,0 +1,4 @@
+int main()
+	printi(false)
+	printi(true)
+Siri
