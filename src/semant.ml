@@ -34,6 +34,8 @@ let check (globals, functions) =
         (String, "strcat", [(String, "x1");(String, "x2")]);
         (String, "strcpy", [(String, "x");(String, "x1")]);
         (Int, "inputint", [(Int, "x")]);
+	(String, "calloc", [(Int, "x1");(Int, "x2")]);
+	(Int, "free", [(String, "x")]);
         (*add built-in function here*)]
   in
     (* Add function name to symbol table *)
