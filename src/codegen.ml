@@ -117,17 +117,41 @@ let translate (globals, functions) =
       L.declare_function "strcpy" strcpy_t the_module
   in
   (* Declare the list_append() functions *)
-  let new_double_t : L.lltype =
-      L.var_arg_function_type list_t [| float_t |]
+  let append_double_t : L.lltype =
+      L.var_arg_function_type list_t [| list_t; i32_t |]
   in
-  let new_double_func : L.llvalue =
-      L.declare_function "new_double" new_double_t the_module
+  let append_double_func : L.llvalue =
+      L.declare_function "append_double" append_double_t the_module
   in
-  let new_int_t : L.lltype =
-      L.var_arg_function_type list_t [| i32_t |]
+  let append_int_t : L.lltype =
+      L.var_arg_function_type list_t [| list_t; i32_t |]
   in
-  let new_int_func : L.llvalue =
-      L.declare_function "new_int" new_int_t the_module
+  let append_int_func : L.llvalue =
+      L.declare_function "append_int" append_int_t the_module
+  in
+  let getn_int_t : L.lltype =
+      L.function_type i32_t [| list_t; i32_t |]
+  in
+  let getn_int_func : L.llvalue =
+      L.declare_function "getn_int" getn_int_t the_module
+  in
+  let getn_double_t : L.lltype =
+      L.function_type float_t [| list_t; i32_t |]
+  in
+  let getn_double_func : L.llvalue =
+      L.declare_function "getn_double" getn_double_t the_module
+  in
+  let setn_int_t : L.lltype =
+      L.function_type void_t [| list_t; i32_t; i32_t|]
+  in
+  let setn_int_func : L.llvalue =
+      L.declare_function "setn_int" setn_int_t the_module
+  in
+  let setn_double_t : L.lltype =
+      L.function_type void_t [| list_t; i32_t; float_t|]
+  in
+  let setn_double_func : L.llvalue =
+      L.declare_function "setn_double" setn_double_t the_module
   in
   (* Declare heap storage function *)
   let calloc_t = L.function_type str_t [| i32_t ; i32_t|] in
@@ -205,11 +229,15 @@ let translate (globals, functions) =
       | SLlist l -> let list_builder l = Array.of_list (List.map (expr builder) l)
                     in
                     (match sx with
-                    List(Int) -> L.build_call new_int_func (Array.append [|L.const_int i32_t (List.length l);|] (list_builder l)) "new_int" builder
-                    |List(Float) -> L.build_call new_double_func (Array.append [|L.const_int i32_t (List.length l);|] (list_builder l)) "new_double" builder
+                    List(Int) -> L.build_call append_int_func (Array.append [|L.const_pointer_null list_t; L.const_int i32_t (List.length l);|] (list_builder l)) "append_int" builder
+                    |List(Float) -> L.build_call append_double_func (Array.append [|L.const_pointer_null list_t; L.const_int i32_t (List.length l);|] (list_builder l)) "append_double" builder
                     |_ -> raise (Failure "List type error"))
       | SAssign (s, e) -> let e' = expr builder e
                           in ignore(L.build_store e' (lookup s) builder); e'
+      | SGetn(s, e) -> (match sx with
+                        Int -> L.build_call getn_int_func [|L.build_load (lookup s) s builder; expr builder e;|] "getn_int" builder
+                        |Float -> L.build_call getn_double_func [|L.build_load (lookup s) s builder; expr builder e;|] "get_double" builder
+                        |_ -> raise (Failure "List type error"))
       | SBinop ((A.Float,_ ) as e1, op, e2) ->
         let e1' = expr builder e1
         and e2' = expr builder e2
@@ -318,6 +346,15 @@ let translate (globals, functions) =
                               (* Build return statement *)
                             | _ -> L.build_ret (expr builder e) builder );
                      builder
+      | SSetn(t, s, e1, e2) -> ignore((match t with
+                               List(Int) -> L.build_call setn_int_func
+                                            [|L.build_load (lookup s) s builder;
+                                            expr builder e1; expr builder e2;|]
+                                            "" builder
+                              |List(Float) -> L.build_call setn_double_func
+                                              [|L.build_load (lookup s) s builder;
+                                              expr builder e1; expr builder e2;|]
+                                              "" builder)); builder
       | SIf (predicate, then_stmt, else_stmt) ->
           let bool_val = expr builder predicate
           in

@@ -8,11 +8,10 @@
 struct iris_list_head *append_int(struct iris_list_head *head, int num, ...);
 struct iris_list_head *append_double(struct iris_list_head *head, int num, ...);
 struct iris_list_head *append_char(struct iris_list_head *head, int num, ...);
-struct iris_list_head *new_int(int num, ...);
-struct iris_list_head *new_double(int num, ...);
-struct iris_list_head *new_char(int num, ...);
-
-
+int getn_int(struct iris_list_head *head, int n);
+double getn_double(struct iris_list_head *head, int n);
+char getn_char(struct iris_list_head *head, int n);
+void setn_int(struct iris_list_head *head, int n, int value);
 
 struct list_head {
     struct list_head *prev, *next;

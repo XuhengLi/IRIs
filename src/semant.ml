@@ -208,7 +208,7 @@ let check (globals, functions) =
           let _ = (match lt with
                     vt -> vt
                     | _ -> raise (Failure "assign type is not compatible with the list type"))
-          in SSetn(s, expr e1, expr e2)
+          in SSetn(type_of_identifier s, s, expr e1, expr e2)
     in (* body of check_function *)
     {
       styp = func.typ;

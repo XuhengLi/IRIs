@@ -24,7 +24,7 @@ type sstmt =
   | SReturn of sexpr
   | SIf of sexpr * sstmt * sstmt
   | SWhile of sexpr * sstmt
-  | SSetn of string * sexpr * sexpr
+  | SSetn of typ * string * sexpr * sexpr
 
 type sfunc_decl = {
     styp : typ;
@@ -53,7 +53,7 @@ let rec string_of_sexpr (t, e) =
   | SCall(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
   | SLlist l -> "[" ^ String.concat ", " (List.map string_of_sexpr l) ^ "]"
-  | SGetn (e1, e2) -> e1 ^ "[" ^ string_of_sexpr e2 ^ "]"
+  | SGetn (e1, e2) -> "SGetn(" ^ e1 ^ ", " ^ string_of_sexpr e2 ^ ")"
   (* | SNoexpr -> "" *)
 				  ) ^ ")"
 
@@ -67,7 +67,7 @@ let rec string_of_sstmt = function
   | SIf(e, s1, s2) ->  "if (" ^ string_of_sexpr e ^ ")\n" ^
       string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
   | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
-  | SSetn(s, e1, e2) -> string_of_sexpr e2 ^ " | " ^ s ^ "[" ^ string_of_sexpr e1 ^"]"
+  | SSetn(t, s, e1, e2) -> "Setn(" ^ string_of_typ t ^ ": " ^ s ^ ", " ^ string_of_sexpr e1 ^ ", " ^ string_of_sexpr e2 ^ ")"
 
 let string_of_sfdecl fdecl =
   string_of_typ fdecl.styp ^ " " ^

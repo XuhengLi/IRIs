@@ -127,72 +127,67 @@ struct iris_list_head *append_char(struct iris_list_head *head, int num, ...)
     return head;
 }
 
-struct iris_list_head *new_int(int num, ...)
+int getn_int(struct iris_list_head *head, int n)
 {
-    int err, i, value;
-    struct iris_list_head *head = NULL;
-    va_list valist;
-
-    va_start(valist, num);
-    for (i = 0; i < num; i++) {
-        value = va_arg(valist, int);
-        err = __append1(&head, sizeof(int));
-        if (err)
-            perror("IRIs error: ");
-
-        memcpy(&(head->data.i[head->length]),
-                                 &value, sizeof(int));
-        head->length += 1;
+    if (n >= head->length) {
+        errno = EFAULT;
+        perror("IRIs error: ");
+        return 0;
     }
-    va_end(valist);
-
-    return head;
+    return head->data.i[n];
 }
 
-struct iris_list_head *new_double(int num, ...)
+double getn_double(struct iris_list_head *head, int n)
 {
-    int err, i;
-    double value;
-    struct iris_list_head *head = NULL;
-    va_list valist;
-
-    va_start(valist, num);
-    for (i = 0; i < num; i++) {
-        value = va_arg(valist, double);
-        err = __append1(&head, sizeof(double));
-        if (err)
-            perror("IRIs error: ");
-
-        memcpy(&(head->data.f[head->length]),
-                                 &value, sizeof(double));
-        head->length += 1;
+    if (n >= head->length) {
+        errno = EFAULT;
+        perror("IRIs error: ");
+        return 0;
     }
-    va_end(valist);
-
-    return head;
+    return head->data.f[n];
 }
 
-struct iris_list_head *new_char(int num, ...)
+char getn_char(struct iris_list_head *head, int n)
 {
-    int err, i, value;
-    struct iris_list_head *head = NULL;
-    va_list valist;
-
-    va_start(valist, num);
-    for (i = 0; i < num; i++) {
-        value = va_arg(valist, int);
-        err = __append1(&head, sizeof(char));
-        if (err)
-            perror("IRIs error: ");
-
-        memcpy(&(head->data.c[head->length]),
-                                 &value, sizeof(char));
-        head->length += 1;
+    if (n >= head->length) {
+        errno = EFAULT;
+        perror("IRIs error: ");
+        return 0;
     }
-    va_end(valist);
-
-    return head;
+    return head->data.c[n];
 }
+
+void setn_int(struct iris_list_head *head, int n, int value)
+{
+    if (n >= head->length) {
+        errno = EFAULT;
+        perror("IRIs error: ");
+        return ;
+    }
+    head->data.i[n] = value;
+}
+
+void setn_double(struct iris_list_head *head, int n, double value)
+{
+    if (n >= head->length) {
+        errno = EFAULT;
+        perror("IRIs error: ");
+        return ;
+    }
+    head->data.f[n] = value;
+}
+
+void setn_char(struct iris_list_head *head, int n, char value)
+{
+    if (n >= head->length) {
+        errno = EFAULT;
+        perror("IRIs error: ");
+        return ;
+    }
+    head->data.c[n] = value;
+}
+//     return head;
+// }
 // struct iris_list_head *append_string(struct iris_list_head *head, char *value)
 // {
 //     int err;
