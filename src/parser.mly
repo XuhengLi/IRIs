@@ -112,9 +112,13 @@ expr:
     | ID                        { Id($1) }
     | LSQR expr_list RSQR       { Llist($2) }
     | expr PLUS   expr   { Binop($1, Add,   $3) }
+    | expr PIPE PLUS expr { Binop($1, Add, $4) }
     | expr MINUS  expr   { Binop($1, Sub,   $3) }
+    | expr PIPE MINUS expr { Binop($1, Sub, $4) }
     | expr TIMES  expr   { Binop($1, Mult,  $3) }
+    | expr PIPE TIMES expr { Binop($1, Mult, $4) }
     | expr DIVIDE expr   { Binop($1, Div,   $3) }
+    | expr PIPE DIVIDE expr { Binop($1, Div, $4) }
     | expr EQ     expr   { Binop($1, Equal, $3) }
     | expr NEQ    expr   { Binop($1, Neq,   $3) }
     | expr LT     expr   { Binop($1, Less,  $3) }
