@@ -1,9 +1,10 @@
 int main()
-    string catedString
-    strcat("first ", "second\n")
+    calloc(1, 20)
     |
-    catedString
+    string catedString
+    strcpy(catedString, "first ")
 
+    strcat(catedString, "second\n")
     print(catedString)
 
     return 0

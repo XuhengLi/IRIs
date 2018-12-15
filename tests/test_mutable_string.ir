@@ -1,0 +1,21 @@
+int main()
+    "hello world"
+    |
+    string s1
+    calloc(1, 30)
+    |
+    string s2
+    calloc(1, 30)
+    |
+    string s3
+
+    strcpy(s2, s1)
+    strcpy(s3, s1)
+    strcat(s3, s1)
+    print_string(s1)
+    print_string(s2)
+    print_string(s3)
+    free(s2)
+    free(s3)
+    return 0
+Siri

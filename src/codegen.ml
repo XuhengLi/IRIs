@@ -115,7 +115,13 @@ let translate (globals, functions) =
   let strcpy_func : L.llvalue =
       L.declare_function "strcpy" strcpy_t the_module
   in
+  (* Declare heap storage function *)
+  let calloc_t = L.function_type p_t [| i32_t ; i32_t|] in
+  let calloc_func = L.declare_function "calloc" calloc_t the_module in
 
+  (* Declare free from heap *)
+  let free_t = L.function_type p_t [| p_t |] in
+  let free_func = L.declare_function "free" free_t the_module in
   (* Define each function (arguments and return type) so we can
      call it even before we've created its body *)
   let function_decls : (L.llvalue * sfunc_decl) StringMap.t =
@@ -256,6 +262,10 @@ let translate (globals, functions) =
             | SCall ("strcpy", [e1; e2]) ->
               L.build_call strcpy_func [|(expr builder e1); (expr builder e2)|]
               "strcpy" builder
+            | SCall("calloc", [e1; e2]) ->
+              L.build_call calloc_func [|(expr builder e1); (expr builder e2)|] "calloc" builder
+            | SCall("free", e) ->
+              L.build_call free_func [| (expr builder e) |] "free" builder
             | SCall (f, args) ->
               let (fdef, fdecl) = StringMap.find f function_decls
               in
