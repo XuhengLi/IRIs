@@ -37,6 +37,7 @@ let translate (globals, functions) =
   in
 
   let str_t      = L.pointer_type i8_t
+  and list_t     = L.pointer_type i8_t
   in
 
   (* Return the LLVM type for a MicroC type *)
@@ -47,7 +48,7 @@ let translate (globals, functions) =
     | A.Float -> float_t
     | A.String  -> str_t
     (* TODO: Add list type *)
-    | A.List _ -> void_t
+    | A.List _ -> list_t
   in
 
   (* Create a map of global variables after creating each *)
@@ -115,6 +116,19 @@ let translate (globals, functions) =
   let strcpy_func : L.llvalue =
       L.declare_function "strcpy" strcpy_t the_module
   in
+  (* Declare the list_append() functions *)
+  let new_double_t : L.lltype =
+      L.var_arg_function_type list_t [| float_t |]
+  in
+  let new_double_func : L.llvalue =
+      L.declare_function "new_double" new_double_t the_module
+  in
+  let new_int_t : L.lltype =
+      L.var_arg_function_type list_t [| i32_t |]
+  in
+  let new_int_func : L.llvalue =
+      L.declare_function "new_int" new_int_t the_module
+  in
   (* Declare heap storage function *)
   let calloc_t = L.function_type str_t [| i32_t ; i32_t|] in
   let calloc_func = L.declare_function "calloc" calloc_t the_module in
@@ -146,7 +160,6 @@ let translate (globals, functions) =
     and int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
     and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder
     in
-
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
        value, if appropriate, and remember their values in the "locals" map *)
@@ -182,13 +195,19 @@ let translate (globals, functions) =
       in L.build_in_bounds_gep str [| null |] "str" builder
     in
     (* Construct code for an expression; return its value *)
-    let rec expr builder ((_, e) : sexpr) = match e with
+    let rec expr builder ((sx, e) : sexpr) = match e with
         SLint i  -> L.const_int i32_t i
       | SLbool b  -> L.const_int i8_t (if b then 1 else 0)
       | SLfloat l -> L.const_float_of_string float_t l
       | SId s       -> L.build_load (lookup s) s builder
       | SLstring s -> build_string s builder
       (* TODO: List support *)
+      | SLlist l -> let list_builder l = Array.of_list (List.map (expr builder) l)
+                    in
+                    (match sx with
+                    List(Int) -> L.build_call new_int_func (Array.append [|L.const_int i32_t (List.length l);|] (list_builder l)) "new_int" builder
+                    |List(Float) -> L.build_call new_double_func (Array.append [|L.const_int i32_t (List.length l);|] (list_builder l)) "new_double" builder
+                    |_ -> raise (Failure "List type error"))
       | SAssign (s, e) -> let e' = expr builder e
                           in ignore(L.build_store e' (lookup s) builder); e'
       | SBinop ((A.Float,_ ) as e1, op, e2) ->

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <stdarg.h>
 #include "liblist_type.h"
 
 static inline void init_list(struct iris_list_head *head)
@@ -61,51 +62,137 @@ int __append1(struct iris_list_head **head, int unit)
     return err;
 }
 
-struct iris_list_head *append_int(struct iris_list_head *head, int value)
+struct iris_list_head *append_int(struct iris_list_head *head, int num, ...)
 {
-    int err;
+    int err, i, value;
+    va_list valist;
 
-    err = __append1(&head, sizeof(int));
-    if (err)
-        perror("IRIs error: ");
+    va_start(valist, num);
+    for (i = 0; i < num; i++) {
+        value = va_arg(valist, int);
+        err = __append1(&head, sizeof(int));
+        if (err)
+            perror("IRIs error: ");
 
-    memcpy(&(head->data.i[head->length]),
-                             &value, sizeof(int));
-    head->length += 1;
+        memcpy(&(head->data.i[head->length]),
+                                 &value, sizeof(int));
+        head->length += 1;
+    }
+    va_end(valist);
 
     return head;
 }
 
-struct iris_list_head *append_double(struct iris_list_head *head, double value)
+struct iris_list_head *append_double(struct iris_list_head *head, int num, ...)
 {
-    int err;
+    int err, i;
+    double value;
+    va_list valist;
 
-    err = __append1(&head, sizeof(double));
-    if (err)
-        perror("IRIs error: ");
+    va_start(valist, num);
+    for (i = 0; i < num; i++) {
+        value = va_arg(valist, double);
+        err = __append1(&head, sizeof(double));
+        if (err)
+            perror("IRIs error: ");
 
-    memcpy(&(head->data.f[head->length]),
-                             &value, sizeof(double));
-    head->length += 1;
+        memcpy(&(head->data.f[head->length]),
+                                 &value, sizeof(double));
+        head->length += 1;
+    }
+    va_end(valist);
 
     return head;
 }
 
-struct iris_list_head *append_char(struct iris_list_head *head, char value)
+struct iris_list_head *append_char(struct iris_list_head *head, int num, ...)
 {
-    int err;
+    int err, i;
+    char value;
+    va_list valist;
 
-    err = __append1(&head, sizeof(char));
-    if (err)
-        perror("IRIs error: ");
+    va_start(valist, num);
+    for (i = 0; i < num; i++) {
+        value = va_arg(valist, int);
+        err = __append1(&head, sizeof(char));
+        if (err)
+            perror("IRIs error: ");
 
-    memcpy(&(head->data.c[head->length]),
-                             &value, sizeof(char));
-    head->length += 1;
+        memcpy(&(head->data.c[head->length]),
+                                 &value, sizeof(char));
+        head->length += 1;
+    }
+    va_end(valist);
 
     return head;
 }
 
+struct iris_list_head *new_int(int num, ...)
+{
+    int err, i, value;
+    struct iris_list_head *head = NULL;
+    va_list valist;
+
+    va_start(valist, num);
+    for (i = 0; i < num; i++) {
+        value = va_arg(valist, int);
+        err = __append1(&head, sizeof(int));
+        if (err)
+            perror("IRIs error: ");
+
+        memcpy(&(head->data.i[head->length]),
+                                 &value, sizeof(int));
+        head->length += 1;
+    }
+    va_end(valist);
+
+    return head;
+}
+
+struct iris_list_head *new_double(int num, ...)
+{
+    int err, i;
+    double value;
+    struct iris_list_head *head = NULL;
+    va_list valist;
+
+    va_start(valist, num);
+    for (i = 0; i < num; i++) {
+        value = va_arg(valist, double);
+        err = __append1(&head, sizeof(double));
+        if (err)
+            perror("IRIs error: ");
+
+        memcpy(&(head->data.f[head->length]),
+                                 &value, sizeof(double));
+        head->length += 1;
+    }
+    va_end(valist);
+
+    return head;
+}
+
+struct iris_list_head *new_char(int num, ...)
+{
+    int err, i, value;
+    struct iris_list_head *head = NULL;
+    va_list valist;
+
+    va_start(valist, num);
+    for (i = 0; i < num; i++) {
+        value = va_arg(valist, int);
+        err = __append1(&head, sizeof(char));
+        if (err)
+            perror("IRIs error: ");
+
+        memcpy(&(head->data.c[head->length]),
+                                 &value, sizeof(char));
+        head->length += 1;
+    }
+    va_end(valist);
+
+    return head;
+}
 // struct iris_list_head *append_string(struct iris_list_head *head, char *value)
 // {
 //     int err;

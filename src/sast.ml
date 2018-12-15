@@ -14,7 +14,7 @@ and sx =
   | SAssign of string * sexpr
   | SCall of string * sexpr list
   (* TODO: List relavant sast *)
-  | SLlist of expr list
+  | SLlist of sexpr list
   | SGetn of string * sexpr
   (* | SNoexpr *)
 
@@ -52,7 +52,7 @@ let rec string_of_sexpr (t, e) =
   | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
   | SCall(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
-  | SLlist _ -> ""
+  | SLlist l -> "[" ^ String.concat ", " (List.map string_of_sexpr l) ^ "]"
   | SGetn (e1, e2) -> e1 ^ "[" ^ string_of_sexpr e2 ^ "]"
   (* | SNoexpr -> "" *)
 				  ) ^ ")"

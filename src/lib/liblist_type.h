@@ -5,9 +5,13 @@
 #define LIST_POISON2    ((void *) 0x200)
 #define IRIS_SIZE_MAX   0x10000
 
-struct iris_list_head *append_int(struct iris_list_head *head, int value);
-struct iris_list_head *append_double(struct iris_list_head *head, double value);
-struct iris_list_head *append_char(struct iris_list_head *head, char value);
+struct iris_list_head *append_int(struct iris_list_head *head, int num, ...);
+struct iris_list_head *append_double(struct iris_list_head *head, int num, ...);
+struct iris_list_head *append_char(struct iris_list_head *head, int num, ...);
+struct iris_list_head *new_int(int num, ...);
+struct iris_list_head *new_double(int num, ...);
+struct iris_list_head *new_char(int num, ...);
+
 
 
 struct list_head {

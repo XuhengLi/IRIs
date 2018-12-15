@@ -109,7 +109,7 @@ let check (globals, functions) =
       | Lbool l  -> (Bool, SLbool l)
       | Lstring s -> (String, SLstring s)
       | Id s       -> (type_of_identifier s, SId s)
-      | Llist s -> ((check_all_list_literal s (list_type s) 0), SLlist s)
+      | Llist s -> ((check_all_list_literal s (list_type s) 0), SLlist (List.map expr s))
       | Assign(var, e) as ex ->
            let lt = type_of_identifier var
            and (rt, e') = expr e in
