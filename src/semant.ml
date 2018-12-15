@@ -33,6 +33,7 @@ let check (globals, functions) =
         (Int, "strcmp", [(String, "x");(String, "x1")]);
         (String, "strcat", [(String, "x1");(String, "x2")]);
         (String, "strcpy", [(String, "x");(String, "x1")]);
+        (Int, "inputint", [(Int, "x")]);
         (*add built-in function here*)]
   in
     (* Add function name to symbol table *)

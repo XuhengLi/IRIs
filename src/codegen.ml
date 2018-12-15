@@ -77,6 +77,13 @@ let translate (globals, functions) =
   let printbig_func : L.llvalue =
       L.declare_function "printbig" printbig_t the_module
   in
+
+  let inputint_t : L.lltype =
+      L.function_type i32_t [| i32_t |]
+  in
+  let inputint_func : L.llvalue =
+      L.declare_function "inputint" inputint_t the_module
+  in
   (* Declare the built-in strlen() function  *)
   let strlen_t : L.lltype =
       L.function_type i32_t [| str_t |]
@@ -238,6 +245,8 @@ let translate (globals, functions) =
               "printf" builder
             | SCall ("strlen", [e]) ->
               L.build_call strlen_func [|(expr builder e)|] "strlen" builder
+            | SCall ("inputint", [e]) ->
+              L.build_call inputint_func [| (expr builder e) |] "inputint" builder
             | SCall ("strcmp", [e1; e2]) ->
               L.build_call strcmp_func [|(expr builder e1); (expr builder e2)|]
               "strcmp" builder

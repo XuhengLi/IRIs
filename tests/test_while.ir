@@ -1,0 +1,12 @@
+int main()
+    int a
+    0
+    |
+    a
+    while(a<10)
+	a+1
+	|
+	a
+    end
+    printi(a)
+Siri
