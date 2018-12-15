@@ -1,0 +1,23 @@
+int main()
+    int rate, bill, tip, total
+
+    2
+    |
+    rate
+    3
+    |
+    bill
+
+    rate
+    |
+    * bill
+    |
+    tip
+    |
+    +bill
+    |
+    total
+
+    printi(tip)
+    printi(total)
+Siri

@@ -1,0 +1,14 @@
+int main()
+    string str1, str2, str3
+    "abcd"
+    |
+    str1
+    "1234"
+    |
+    str2
+    strcpy(str1, str2)
+    print(str1)
+    print("\n")
+
+    return 0
+Siri
