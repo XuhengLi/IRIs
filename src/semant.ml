@@ -28,14 +28,15 @@ let check (globals, functions) =
     in List.fold_left add_bind StringMap.empty
        [(Int, "print", [(String, "x")]);
         (Int, "printi", [(Int, "x")]);
+        (Int, "printf", [(Float, "x")]);
         (Int, "printb", [(Bool, "x")]);
         (Int, "strlen", [(String, "x")]);
         (Int, "strcmp", [(String, "x");(String, "x1")]);
         (String, "strcat", [(String, "x1");(String, "x2")]);
         (String, "strcpy", [(String, "x");(String, "x1")]);
         (Int, "inputint", [(Int, "x")]);
-	(String, "calloc", [(Int, "x1");(Int, "x2")]);
-	(Int, "free", [(String, "x")]);
+        (String, "calloc", [(Int, "x1")]);
+        (Int, "free", [(String, "x")]);
         (*add built-in function here*)]
   in
     (* Add function name to symbol table *)

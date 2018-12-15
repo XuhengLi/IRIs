@@ -309,8 +309,8 @@ let translate (globals, functions) =
             | SCall ("strcpy", [e1; e2]) ->
               L.build_call strcpy_func [|(expr builder e1); (expr builder e2)|]
               "strcpy" builder
-            | SCall("calloc", [e1; e2]) ->
-              L.build_call calloc_func [|(expr builder e1); (expr builder e2)|] "calloc" builder
+            | SCall("calloc", [e]) ->
+              L.build_call calloc_func [|L.const_int i32_t 1; (expr builder e)|] "calloc" builder
             | SCall("free", [e]) ->
               L.build_call free_func [| (expr builder e) |] "free" builder
             | SCall (f, args) ->

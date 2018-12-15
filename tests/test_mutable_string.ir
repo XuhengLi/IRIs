@@ -1,6 +1,6 @@
 int main()
 string as
-calloc(1,30)
+calloc(30)
 |
 as
 strcpy(as, "hello\n")
