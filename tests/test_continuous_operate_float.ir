@@ -1,0 +1,15 @@
+int main()
+	float a,b,c
+	1.23
+	|
+	a 
+	|
+	b
+	|
+	+2.12
+	|
+	c
+	printf(a)
+	printf(b)
+	printf(c)
+Siri
