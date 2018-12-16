@@ -1,7 +1,0 @@
-int main()
-    int a
-    if (a > 5)
-        6|a
-    fi
-    7|a
-Siri
