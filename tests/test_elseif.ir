@@ -1,0 +1,21 @@
+int main()
+    int a
+	3
+	|
+	a
+    if (a==1)
+        10
+	|
+	b
+    elif(a==2)
+        100
+	|
+	b
+    else
+	1000
+	|
+	b
+    fi
+
+    printi(b)
+Siri
