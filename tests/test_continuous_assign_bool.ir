@@ -1,9 +1,10 @@
 int main()
-    bool a,b
+    bool a,b,c
     true
     |
     a
-    false
     |
     b
+    |
+    c
 Siri
