@@ -1,0 +1,70 @@
+int start_order()
+    return 0
+Siri
+
+int add_rice(int calorie)
+    string[] rices 
+    int num
+    int cur
+
+    0
+    |
+    cur
+    ["1: White Rice", "2: Brown Rice"]
+    |
+    rices
+    "What kinda rice do you want?\n"
+    |
+    print
+
+    rices
+    |
+    length
+    |
+    len
+    
+    while(cur<len)
+        (rices[cur], "\n")
+        |
+        strcat
+        |
+        print
+
+        1
+        +cur
+        |
+        cur
+    endwhile
+
+    inputi()
+    |
+    rice
+    
+    if (rice=1)
+        return calorie + 120
+    elif (rice=2)
+        return calorie + 120
+    else
+        return calorie
+    fi
+
+    return calorie
+
+
+
+int print_order(int calorie)
+    calorie
+    |
+    printi
+    return 0
+Siri
+
+int main()
+    start_order
+    |
+    add_rice
+    |
+    print_order
+
+    return 0
+Siri
