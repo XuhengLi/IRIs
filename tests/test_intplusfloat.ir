@@ -2,8 +2,15 @@ int main()
 	int a
 	float b
 	float c
+	1
+	|
+	a
+	
+	2.2
+	|
+	b
+	
 	a+b
 	|
 	c
 Siri
-	
