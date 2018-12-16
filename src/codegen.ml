@@ -94,9 +94,23 @@ let translate (globals, functions) =
   let inputstring_t : L.lltype =
       L.function_type str_t [| str_t |]
   in
+
   let inputstring_func : L.llvalue =
       L.declare_function "inputstring" inputstring_t the_module
-  
+  in
+  let inputfile_t : L.lltype =
+      L.function_type str_t [| str_t;i32_t|]
+  in
+  let inputfile_func : L.llvalue =
+      L.declare_function "inputfile" inputfile_t the_module
+  in
+  let inputgui_t : L.lltype =
+      L.function_type i32_t [| i32_t |]
+  in
+  let inputgui_func : L.llvalue =
+      L.declare_function "inputgui" inputgui_t the_module
+
+  in
   (* Declare the built-in strlen() function  *)
   let strlen_t : L.lltype =
       L.function_type i32_t [| str_t |]
@@ -343,6 +357,11 @@ let translate (globals, functions) =
               L.build_call strlen_func [|(expr builder e)|] "strlen" builder
             | SCall ("inputint", [e]) ->
               L.build_call inputint_func [| (expr builder e) |] "inputint" builder
+            | SCall ("inputgui", [e]) ->
+              L.build_call inputgui_func [| (expr builder e) |] "inputgui" builder
+            | SCall ("inputfile", [e1; e2]) ->
+              L.build_call inputfile_func [|(expr builder e1); (expr builder e2)|]
+              "inputfile" builder  
             | SCall ("strcmp", [e1; e2]) ->
               L.build_call strcmp_func [|(expr builder e1); (expr builder e2)|]
               "strcmp" builder

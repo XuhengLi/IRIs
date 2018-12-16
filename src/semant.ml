@@ -39,6 +39,8 @@ let check (globals, functions) =
         (String, "inputstring", [(String, "x")]);
         (String, "calloc", [(Int, "x1")]);
         (Int, "free", [(String, "x")]);
+        (Int, "inputgui", [(Int, "x")]);
+        (String, "inputfile", [(String, "x1");(Int, "x")]);
         (*add built-in function here*)]
   in
     (* Add function name to symbol table *)

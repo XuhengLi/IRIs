@@ -1,0 +1,12 @@
+int main()
+
+    string str1
+
+
+    inputfile("chatbot.txt",100)
+    |
+    str1
+
+    print(str1)
+    return 0
+Siri
