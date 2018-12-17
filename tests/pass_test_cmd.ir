@@ -1,9 +1,9 @@
 int main()
     string content, mail, command
-    inputstring(0)
+    inputstring("Please input the content:\n")
     |
     content
-    inputstring(0)
+    inputstring("Please input the email address:\n")
     |
     mail
     calloc(80)
