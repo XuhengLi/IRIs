@@ -1,0 +1,9 @@
+int fun(int a)
+	a+1
+	|
+	a
+Siri
+
+int main()
+	fun("hello")
+Siri
