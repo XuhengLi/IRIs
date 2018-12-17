@@ -63,6 +63,7 @@ rule token =
     | _ as ch { raise (Failure("invalid character detected " ^ Char.escaped ch)) }
     and comment =
     parse "*/" { token lexbuf } (* end comment *)
+    | ['\n']+                   { NEWLINE }
     | _ { comment lexbuf }
     and str_of_string buffer =  (* can be more functional *)
     parse '"' { Buffer.contents buffer}
