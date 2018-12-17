@@ -6,4 +6,5 @@ int main()
     4.1
     |
     a[0]
+    printf(a[0])
 Siri
