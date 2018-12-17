@@ -15,8 +15,8 @@ LLC="llc"
 # Path to the C compiler
 CC="cc"
 
-# Path to the microc compiler.  Usually "./iris.native"
-# Try "_build/microc.native" if ocamlbuild was unable to create a symbolic link.
+# Path to the iris compiler.  Usually "./iris.native"
+# Try "_build/iris.native" if ocamlbuild was unable to create a symbolic link.
 IRIS="./src/iris.native"
 #IRIS="_build/iris.native"
 
