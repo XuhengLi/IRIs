@@ -2,7 +2,7 @@
 open Ast
 %}
 
-%token COMMA LPAR RPAR LSQR RSQR
+%token COMMA LPAR RPAR LSQR RSQR ZDKH YDKH
 %token IF ELIF ENDIF ELSE ENDFUN NEWLINE
 %token WHILE ENDLOOP BREAK CONTINUE
 %token TRUE FALSE
@@ -61,7 +61,7 @@ param_list:
 TYPE:
     basic_type          { $1 }
     | basic_type LSQR RSQR      { List($1)}
-    | TUPLE LPAR basic_type_list RPAR                    { Tuple(List.rev $3) }
+    | TUPLE ZDKH basic_type_list YDKH                    { Tuple(List.rev $3) }
 
 basic_type_list:
         {[]}
@@ -116,7 +116,7 @@ expr:
     | LBOOL                     { Lbool($1) }
     | ID                        { Id($1) }
     | LSQR expr_list RSQR       { Llist($2) }
-    | LPAR expr_list RPAR       { Ltuple($2) }
+    | ZDKH expr_list YDKH       { Ltuple($2) }
     | expr PLUS   expr   { Binop($1, Add,   $3) }
     | expr PIPE PLUS expr { Binop($1, Add, $4) }
     | expr MINUS  expr   { Binop($1, Sub,   $3) }

@@ -22,6 +22,8 @@ rule token =
     | ','                       { COMMA }
     | '('                       { LPAR }
     | ')'                       { RPAR }
+    | '{'                       { ZDKH}
+    | '}'                       { YDKH }
     (* logic *)
     | '='                       { EQ }
     | "!="                      { NEQ }

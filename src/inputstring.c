@@ -4,9 +4,10 @@
 
 #define BUFFER 100
 
-char *inputstring( int a) {
+char *inputstring(char *str) {
   char *text = malloc(BUFFER * sizeof(char));
     
+  printf("%s", str);
   scanf("%s",text);
   return text;
 }

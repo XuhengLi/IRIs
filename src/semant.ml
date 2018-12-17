@@ -36,7 +36,7 @@ let check (globals, functions) =
         (String, "strcpy", [(String, "x");(String, "x1")]);
         (Int, "inputint", [(Int, "x")]);
         (Float, "inputfloat", [(Float, "x")]);
-        (String, "inputstring", [(Int, "x")]);
+        (String, "inputstring", [(String, "x")]);
         (String, "calloc", [(Int, "x1")]);
         (Int, "free", [(String, "x")]);
         (Int, "inputgui", [(Int, "x")]);

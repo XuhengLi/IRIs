@@ -84,7 +84,7 @@ let translate (globals, functions) =
       L.declare_function "inputint" inputint_t the_module
   in
   let inputstring_t : L.lltype =
-      L.function_type str_t [| i32_t|]
+      L.function_type str_t [| str_t |]
   in
   let inputstring_func : L.llvalue =
       L.declare_function "inputstring" inputstring_t the_module
