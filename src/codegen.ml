@@ -77,29 +77,14 @@ let translate (globals, functions) =
   let printbig_func : L.llvalue =
       L.declare_function "printbig" printbig_t the_module
   in
-
   let inputint_t : L.lltype =
       L.function_type i32_t [| i32_t |]
   in
   let inputint_func : L.llvalue =
       L.declare_function "inputint" inputint_t the_module
-      
-  let inputfloat_t : L.lltype =
-      L.function_type float_t [| float_t |]
   in
-  let inputfloat_func : L.llvalue =
-      L.declare_function "inputfloat" inputfloat_t the_module
-  in
-  
   let inputstring_t : L.lltype =
       L.function_type str_t [| str_t |]
-  in
-
-  let inputstring_func : L.llvalue =
-      L.declare_function "inputstring" inputstring_t the_module
-  in
-  let inputstring_t : L.lltype =
-      L.function_type str_t [| i32_t |]
   in
   let inputstring_func : L.llvalue =
       L.declare_function "inputstring" inputstring_t the_module
@@ -133,11 +118,6 @@ let translate (globals, functions) =
   in
   let sendmail_func : L.llvalue =
       L.declare_function "sendmail" sendmail_t the_module
-  
-  
-
-
-
   in
   (* Declare the built-in strlen() function  *)
   let strlen_t : L.lltype =
@@ -391,7 +371,7 @@ let translate (globals, functions) =
               L.build_call cmd_func [| (expr builder e) |] "cmd" builder
             | SCall ("inputstring", [e]) ->
               L.build_call inputstring_func [| (expr builder e) |] "inputstring" builder
-            | SCall ("sendmail", [e]) ->
+            | SCall ("sendmail", [e1; e2]) ->
               L.build_call sendmail_func [| (expr builder e1);(expr builder e2) |] "sendmail" builder
             | SCall ("inputgui", [e]) ->
               L.build_call inputgui_func [| (expr builder e) |] "inputgui" builder

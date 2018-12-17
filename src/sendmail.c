@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -15,7 +16,7 @@ int sendmail(char* body, char* email){
         //fclose(fp);             // close it.
 
         
-        strcat (str,"is your name?");
+        // strcat (str,"is your name?");
         sprintf(cmd," echo %s | mail -s \"noreply at `date`\" %s",body,email); // prepare command.
         system(cmd);     // execute it.
 

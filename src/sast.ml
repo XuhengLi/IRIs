@@ -12,7 +12,6 @@ and sx =
   | SBinop of sexpr * op * sexpr
   | SUnop of uop * sexpr
   | SAssign of string * sexpr
-  | SSizeof of string
   | SCall of string * sexpr list
   (* TODO: List relavant sast *)
   | SLlist of sexpr list

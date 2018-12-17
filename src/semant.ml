@@ -35,15 +35,10 @@ let check (globals, functions) =
         (String, "strcat", [(String, "x1");(String, "x2")]);
         (String, "strcpy", [(String, "x");(String, "x1")]);
         (Int, "inputint", [(Int, "x")]);
-<<<<<<< HEAD
         (Float, "inputfloat", [(Float, "x")]);
         (String, "inputstring", [(String, "x")]);
         (String, "calloc", [(Int, "x1")]);
         (Int, "free", [(String, "x")]);
-=======
-        (Float, "inputfloat", [(Int, "x")]);
-        (String, "inputstring", [(Int, "x")]);
->>>>>>> external function
         (Int, "inputgui", [(Int, "x")]);
         (String, "cmd", [(String, "x")]);
         (Int, "sendmail", [(String, "x1");(String, "x2")]);
