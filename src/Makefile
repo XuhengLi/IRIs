@@ -1,5 +1,5 @@
 .PHONY : all
-all : iris.native inputint.o inputfile.o inputgui.o sendmail.o inputstring.o cmd.o
+all : iris.native inputint.o inputfile.o inputgui.o sendmail.o inputstring.o cmd.o inputfloat.o inputint.o
 	
 iris.native:
 	opam config exec -- \

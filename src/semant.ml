@@ -34,8 +34,8 @@ let check (globals, functions) =
         (Int, "strcmp", [(String, "x");(String, "x1")]);
         (String, "strcat", [(String, "x1");(String, "x2")]);
         (String, "strcpy", [(String, "x");(String, "x1")]);
-        (Int, "inputint", [(Int, "x")]);
-        (Float, "inputfloat", [(Float, "x")]);
+        (Int, "inputint", [(String, "x")]);
+        (Float, "inputfloat", [(String, "x")]);
         (String, "inputstring", [(String, "x")]);
         (String, "calloc", [(Int, "x1")]);
         (Int, "free", [(String, "x")]);
@@ -139,10 +139,12 @@ let check (globals, functions) =
               in (check_assign lt rt err, SAssign(var, (rt, e')))
             )
 
-      | Getn(s, e1) -> let _ = (match (expr e1) with
-                           (Int, SLint l) -> (Int, SLint l)
+      | Getn(s, e) -> let e' = expr e in
+                      let _ = (match e' with
+                           (Int, SId _)
+                          | (Int, SLint _) -> e'
                           | _ -> raise (Failure ("attempting to access with a non-integer type"))) in
-                          ( list_access_type (type_of_identifier s), SGetn(s, expr e1) )
+                          ( list_access_type (type_of_identifier s), SGetn(s, e') )
       | Unop(op, e) as ex ->
         let (t, e') = expr e
         in

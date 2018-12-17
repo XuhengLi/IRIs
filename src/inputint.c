@@ -1,8 +1,9 @@
 #include <stdio.h>
 
-int inputint(int b)
+int inputint(char *str)
 {
    int a;
+   printf("%s", str);
    scanf("%d",&a);
    return a;
 }

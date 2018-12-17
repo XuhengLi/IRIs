@@ -78,7 +78,7 @@ let translate (globals, functions) =
       L.declare_function "printbig" printbig_t the_module
   in
   let inputint_t : L.lltype =
-      L.function_type i32_t [| i32_t |]
+      L.function_type i32_t [| str_t |]
   in
   let inputint_func : L.llvalue =
       L.declare_function "inputint" inputint_t the_module
@@ -90,7 +90,7 @@ let translate (globals, functions) =
       L.declare_function "inputstring" inputstring_t the_module
   in
   let inputfloat_t : L.lltype =
-      L.function_type str_t [| i32_t |]
+      L.function_type float_t [| str_t |]
   in
   let inputfloat_func : L.llvalue =
       L.declare_function "inputfloat" inputfloat_t the_module
