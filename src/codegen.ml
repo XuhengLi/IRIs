@@ -267,10 +267,6 @@ let translate (globals, functions) =
       | SGetn(s, e) -> (match sx with
                         Int -> L.build_call getn_int_func [|L.build_load (lookup s) s builder; expr builder e;|] "getn_int" builder
                         | Float -> L.build_call getn_double_func [|L.build_load (lookup s) s builder; expr builder e;|] "get_double" builder
-(*                         | Tuple _ -> let a = expr builder (Tuple, SId(s))
-                                   in 
-                                   let sz = L.build_struct_gep a L.const_int i32_t 1 "sz" builder
-                                   in sz *)
                         | _ -> raise (Failure "List type error"))
       | SBinop ((A.Float,_ ) as e1, op, e2) ->
         let e1' = expr builder e1
@@ -324,27 +320,6 @@ let translate (globals, functions) =
             | SCall ("printi", [e]) ->
               L.build_call printf_func [|int_format_str ; (expr builder e)|]
               "printf" builder
-            | STCall(f, args, n) -> 
-              let (fdef, fdecl) = StringMap.find f function_decls
-              in
-              let load_args idx =
-                  let idx = L.const_int i32_t idx in
-                  let struct_ptr = L.build_load (lookup args) args builder in
-(*                   let arr = 
-                    L.build_load 
-                      (L.build_struct_gep struct_ptr 0 "access2" builder)
-                      "idl"
-                      builder
-                  in 
-                  let res = L.build_gep struct_ptr [| idx |] "access3" builder in
-                  L.build_load res "access4" builder*)
-                  L.build_gep struct_ptr [| idx |] "access3" builder
-              in 
-              let llargs = List.map load_args (List.init n (fun x -> x))
-              in
-              let result = (match fdecl.styp with
-                      | _ -> f ^ "_result")
-              in L.build_call fdef (Array.of_list llargs) result builder
             | SCall ("printbig", [e]) ->
               L.build_call printbig_func [| (expr builder e) |]
               "printbig" builder

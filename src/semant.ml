@@ -122,23 +122,6 @@ let check (globals, functions) =
                     and fname = var
                     in
                     expr (Call(fname, args))
-(*                     let fd = find_func fname
-                    in
-                    let param_length = List.length fd.formals
-                    in
-                    if List.length args != param_length then
-                      raise (Failure ("expecting " ^ string_of_int param_length ^
-                                      " arguments in " ^ string_of_expr ex))
-                    else
-                      let check_call (ft, _) e =
-                        let (et, e') = expr e
-                        in
-                        let err = "illegal argument found " ^ string_of_typ et ^
-                          " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
-                        in (check_assign ft et err, e')
-                      in
-                      let args' = List.map2 check_call fd.formals args
-                      in (fd.typ, SCall(fname, args')) *)
             | _ ->
               let lt = type_of_identifier var
               and (rt, e') = expr e
@@ -187,27 +170,9 @@ let check (globals, functions) =
           in
           let param_length = List.length fd.formals
           in
-          let tuple_check_call args n = 
             if List.length args != param_length then
               raise (Failure ("expecting " ^ string_of_int param_length ^
-                              " arguments in " ^ string_of_expr call ^ ", has " ^ string_of_int (List.length args)))
-            else
-              let check_call (ft, _) e =
-                let err = "illegal argument found " ^ string_of_typ e ^
-                  " expected " ^ string_of_typ ft
-                in check_assign ft e err
-              in
-              ignore(List.map2 check_call fd.formals args);
-              (fd.typ, STCall(fname, n, param_length))
-          in
-          let do_check_call args =
-            if List.length args != param_length then
-              let t = expr (List.hd args) in
-              (match t with
-                (Tuple(l), SAssign(n, _)) -> tuple_check_call l n
-                | _ ->  raise (Failure ("expecting " ^ string_of_int param_length ^
                               " arguments in " ^ string_of_expr call))
-              )
             else
               let check_call (ft, _) e =
                 let (et, e') = expr e
@@ -218,7 +183,7 @@ let check (globals, functions) =
               in
               let args' = List.map2 check_call fd.formals args
               in (fd.typ, SCall(fname, args'))
-          in do_check_call args
+
     in
 
     let check_bool_expr e =
