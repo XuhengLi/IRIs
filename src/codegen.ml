@@ -83,7 +83,20 @@ let translate (globals, functions) =
   in
   let inputint_func : L.llvalue =
       L.declare_function "inputint" inputint_t the_module
+      
+  let inputfloat_t : L.lltype =
+      L.function_type float_t [| float_t |]
   in
+  let inputfloat_func : L.llvalue =
+      L.declare_function "inputfloat" inputfloat_t the_module
+  in
+  
+  let inputstring_t : L.lltype =
+      L.function_type str_t [| str_t |]
+  in
+  let inputstring_func : L.llvalue =
+      L.declare_function "inputstring" inputstring_t the_module
+  
   (* Declare the built-in strlen() function  *)
   let strlen_t : L.lltype =
       L.function_type i32_t [| str_t |]
