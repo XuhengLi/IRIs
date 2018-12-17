@@ -76,9 +76,9 @@ let check (globals, functions) =
                   StringMap.empty (globals @ func.formals @ func.locals )
     in
     (* Return a variable from our local symbol table *)
-    let type_of_identifier s =
-     try StringMap.find s symbols
-     with Not_found -> raise (Failure ("undeclared identifier " ^ s))
+    let type_of_identifier s = 
+    try StringMap.find s symbols
+    with Not_found -> raise (Failure ("undeclared identifier " ^ s))
     in
     let list_access_type = function
        List(t) -> t
@@ -110,13 +110,44 @@ let check (globals, functions) =
       | Lbool l  -> (Bool, SLbool l)
       | Lstring s -> (String, SLstring s)
       | Id s       -> (type_of_identifier s, SId s)
-      | Llist s -> ((check_all_list_literal s (list_type s) 0), SLlist (List.map expr s))
+      | Llist l -> ((check_all_list_literal l (list_type l) 0), SLlist (List.map expr l))
+      | Ltuple l -> (Tuple(List.map (fun e -> fst (expr e)) l), SLtuple (List.map expr l))
       | Assign(var, e) as ex ->
-           let lt = type_of_identifier var
-           and (rt, e') = expr e in
-           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
-             string_of_typ rt ^ " in " ^ string_of_expr ex
-           in (check_assign lt rt err, SAssign(var, (rt, e')))
+            (match var with 
+              _ when StringMap.mem var function_decls ->
+                    let args =  (match e with
+                                  Ltuple l -> l
+                                | _ -> [e]
+                                )
+                    and fname = var
+                    in
+                    expr (Call(fname, args))
+(*                     let fd = find_func fname
+                    in
+                    let param_length = List.length fd.formals
+                    in
+                    if List.length args != param_length then
+                      raise (Failure ("expecting " ^ string_of_int param_length ^
+                                      " arguments in " ^ string_of_expr ex))
+                    else
+                      let check_call (ft, _) e =
+                        let (et, e') = expr e
+                        in
+                        let err = "illegal argument found " ^ string_of_typ et ^
+                          " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
+                        in (check_assign ft et err, e')
+                      in
+                      let args' = List.map2 check_call fd.formals args
+                      in (fd.typ, SCall(fname, args')) *)
+            | _ ->
+              let lt = type_of_identifier var
+              and (rt, e') = expr e
+              in
+              let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
+               string_of_typ rt ^ " in " ^ string_of_expr ex
+              in (check_assign lt rt err, SAssign(var, (rt, e')))
+            )
+
       | Getn(s, e1) -> let _ = (match (expr e1) with
                            (Int, SLint l) -> (Int, SLint l)
                           | _ -> raise (Failure ("attempting to access with a non-integer type"))) in
@@ -152,23 +183,42 @@ let check (globals, functions) =
                         string_of_typ t2 ^ " in " ^ string_of_expr e))
         in (ty, SBinop((t1, e1'), op, (t2, e2')))
       | Call(fname, args) as call ->
-        let fd = find_func fname
-        in
-        let param_length = List.length fd.formals
-        in
-        if List.length args != param_length then
-          raise (Failure ("expecting " ^ string_of_int param_length ^
-                          " arguments in " ^ string_of_expr call))
-        else
-          let check_call (ft, _) e =
-            let (et, e') = expr e
-            in
-            let err = "illegal argument found " ^ string_of_typ et ^
-              " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
-            in (check_assign ft et err, e')
+          let fd = find_func fname
           in
-          let args' = List.map2 check_call fd.formals args
-          in (fd.typ, SCall(fname, args'))
+          let param_length = List.length fd.formals
+          in
+          let tuple_check_call args n = 
+            if List.length args != param_length then
+              raise (Failure ("expecting " ^ string_of_int param_length ^
+                              " arguments in " ^ string_of_expr call ^ ", has " ^ string_of_int (List.length args)))
+            else
+              let check_call (ft, _) e =
+                let err = "illegal argument found " ^ string_of_typ e ^
+                  " expected " ^ string_of_typ ft
+                in check_assign ft e err
+              in
+              ignore(List.map2 check_call fd.formals args);
+              (fd.typ, STCall(fname, n, param_length))
+          in
+          let do_check_call args =
+            if List.length args != param_length then
+              let t = expr (List.hd args) in
+              (match t with
+                (Tuple(l), SAssign(n, _)) -> tuple_check_call l n
+                | _ ->  raise (Failure ("expecting " ^ string_of_int param_length ^
+                              " arguments in " ^ string_of_expr call))
+              )
+            else
+              let check_call (ft, _) e =
+                let (et, e') = expr e
+                in
+                let err = "illegal argument found " ^ string_of_typ et ^
+                  " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
+                in (check_assign ft et err, e')
+              in
+              let args' = List.map2 check_call fd.formals args
+              in (fd.typ, SCall(fname, args'))
+          in do_check_call args
     in
 
     let check_bool_expr e =

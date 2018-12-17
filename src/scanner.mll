@@ -42,6 +42,7 @@ rule token =
     | "float"                   { FLOAT }
     | "string"                  { STRING }
     | "bool"                    { BOOL }
+    | "tuple"                   { TUPLE }
     | "if"                      { IF }
     | "else"                    { ELSE }
     | "elif"                    { ELIF }

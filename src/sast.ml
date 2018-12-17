@@ -12,9 +12,12 @@ and sx =
   | SBinop of sexpr * op * sexpr
   | SUnop of uop * sexpr
   | SAssign of string * sexpr
+  | SSizeof of string
   | SCall of string * sexpr list
+  | STCall of string * string * int
   (* TODO: List relavant sast *)
   | SLlist of sexpr list
+  | SLtuple of sexpr list
   | SGetn of string * sexpr
   (* | SNoexpr *)
 
@@ -52,7 +55,10 @@ let rec string_of_sexpr (t, e) =
   | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
   | SCall(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
+  | STCall(f, s, n) ->
+      f ^ "(" ^ s ^ ", " ^ string_of_int n ^")"
   | SLlist l -> "[" ^ String.concat ", " (List.map string_of_sexpr l) ^ "]"
+  | SLtuple l -> "(" ^ String.concat ", " (List.map string_of_sexpr l) ^ ")"
   | SGetn (e1, e2) -> "SGetn(" ^ e1 ^ ", " ^ string_of_sexpr e2 ^ ")"
   (* | SNoexpr -> "" *)
 				  ) ^ ")"

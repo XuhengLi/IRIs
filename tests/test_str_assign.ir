@@ -1,0 +1,10 @@
+int main()
+    string as
+    "calloc(30)\n"
+    |
+    as
+    print(as)
+    free(as)
+    return 0
+Siri
+

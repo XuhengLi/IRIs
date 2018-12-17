@@ -38,6 +38,7 @@ let translate (globals, functions) =
 
   let str_t      = L.pointer_type i8_t
   and list_t     = L.pointer_type i8_t
+  and tuple_t     = L.pointer_type i8_t
   in
 
   (* Return the LLVM type for a MicroC type *)
@@ -48,7 +49,8 @@ let translate (globals, functions) =
     | A.Float -> float_t
     | A.String  -> str_t
     (* TODO: Add list type *)
-    | A.List _ -> list_t
+    | A.List l -> list_t
+    | A.Tuple (_) -> tuple_t
   in
 
   (* Create a map of global variables after creating each *)
@@ -65,9 +67,6 @@ let translate (globals, functions) =
   in
   let printf_func : L.llvalue =
       L.declare_function "printf" printf_t the_module
-  in
-  let printb_t : L.lltype =
-      L.var_arg_function_type i32_t [| L.pointer_type i1_t |]
   in
   let printb_func : L.llvalue =
       L.declare_function "printf" printf_t the_module
@@ -153,6 +152,12 @@ let translate (globals, functions) =
   let setn_double_func : L.llvalue =
       L.declare_function "setn_double" setn_double_t the_module
   in
+  let sassign_t : L.lltype =
+      L.function_type str_t [| str_t; str_t;|]
+  in
+  let sassign_func : L.llvalue =
+      L.declare_function "sassign" sassign_t the_module
+  in
   (* Declare heap storage function *)
   let calloc_t = L.function_type str_t [| i32_t ; i32_t|] in
   let calloc_func = L.declare_function "calloc" calloc_t the_module in
@@ -198,7 +203,13 @@ let translate (globals, functions) =
        * resulting registers to our map *)
         and add_local m (t, n) =
           let local_var = L.build_alloca (ltype_of_typ t) n builder
-          in StringMap.add n local_var m
+          in (match t with 
+              Int -> ignore (L.build_store (L.const_int i32_t 0) local_var builder); StringMap.add n local_var m
+            | Float -> ignore (L.build_store (L.const_float float_t 0.0) local_var builder); StringMap.add n local_var m
+            | String
+            | List(_) -> ignore (L.build_store (L.const_pointer_null (L.pointer_type i8_t)) local_var builder); StringMap.add n local_var m
+            | Bool -> ignore (L.build_store (L.const_int i8_t 0) local_var builder); StringMap.add n local_var m
+            | Tuple _ -> ignore (L.build_store (L.const_pointer_null (L.pointer_type i8_t)) local_var builder); StringMap.add n local_var m)
       in
 
       let formals = List.fold_left2 add_formal StringMap.empty fdecl.sformals
@@ -230,14 +241,37 @@ let translate (globals, functions) =
                     in
                     (match sx with
                     List(Int) -> L.build_call append_int_func (Array.append [|L.const_pointer_null list_t; L.const_int i32_t (List.length l);|] (list_builder l)) "append_int" builder
-                    |List(Float) -> L.build_call append_double_func (Array.append [|L.const_pointer_null list_t; L.const_int i32_t (List.length l);|] (list_builder l)) "append_double" builder
-                    |_ -> raise (Failure "List type error"))
-      | SAssign (s, e) -> let e' = expr builder e
-                          in ignore(L.build_store e' (lookup s) builder); e'
+                    | List(Float) -> L.build_call append_double_func (Array.append [|L.const_pointer_null list_t; L.const_int i32_t (List.length l);|] (list_builder l)) "append_double" builder
+                    | _ -> raise (Failure "List type error"))
+      | SLtuple l -> let t = L.const_struct context (Array.of_list (List.map (expr builder) l))
+                    in
+                    let null = L.const_int i32_t 0
+                    in L.build_in_bounds_gep t [| null |] "tpl" builder
+      | SAssign (s, e) -> let n = try lookup s
+                                  with Not_found -> 
+
+                                  let (fdef, fdecl) = StringMap.find s function_decls
+                                  in
+                                  let llargs = List.rev (List.map (expr builder) (List.rev [e]))
+                                  in
+                                  let result = (match fdecl.styp with
+                                          | _ -> s ^ "_result")
+                                  in L.build_call fdef (Array.of_list llargs) result builder
+
+                          in
+                        (match sx with
+                          String -> let e' = L.build_call sassign_func [|L.build_load n s builder; expr builder e;|] "sassign" builder
+                                    in ignore(L.build_store e' n builder); e'
+                          | _ -> let e' = expr builder e
+                                in ignore(L.build_store e' n builder); e')
       | SGetn(s, e) -> (match sx with
                         Int -> L.build_call getn_int_func [|L.build_load (lookup s) s builder; expr builder e;|] "getn_int" builder
-                        |Float -> L.build_call getn_double_func [|L.build_load (lookup s) s builder; expr builder e;|] "get_double" builder
-                        |_ -> raise (Failure "List type error"))
+                        | Float -> L.build_call getn_double_func [|L.build_load (lookup s) s builder; expr builder e;|] "get_double" builder
+(*                         | Tuple _ -> let a = expr builder (Tuple, SId(s))
+                                   in 
+                                   let sz = L.build_struct_gep a L.const_int i32_t 1 "sz" builder
+                                   in sz *)
+                        | _ -> raise (Failure "List type error"))
       | SBinop ((A.Float,_ ) as e1, op, e2) ->
         let e1' = expr builder e1
         and e2' = expr builder e2
@@ -281,7 +315,7 @@ let translate (globals, functions) =
             (match op with
               A.Neg when t = A.Float -> L.build_fneg
             | A.Neg                  -> L.build_neg
-            | A.Not                  -> L.build_not) e' "tmp" builder
+            | A.Not                  -> L.build_not) e' "tmp" builder 
             | SCall ("print", [e]) ->
               L.build_call printf_func [|(expr builder e)|] "printf" builder
             | SCall ("printb", [e]) ->
@@ -290,6 +324,27 @@ let translate (globals, functions) =
             | SCall ("printi", [e]) ->
               L.build_call printf_func [|int_format_str ; (expr builder e)|]
               "printf" builder
+            | STCall(f, args, n) -> 
+              let (fdef, fdecl) = StringMap.find f function_decls
+              in
+              let load_args idx =
+                  let idx = L.const_int i32_t idx in
+                  let struct_ptr = L.build_load (lookup args) args builder in
+(*                   let arr = 
+                    L.build_load 
+                      (L.build_struct_gep struct_ptr 0 "access2" builder)
+                      "idl"
+                      builder
+                  in 
+                  let res = L.build_gep struct_ptr [| idx |] "access3" builder in
+                  L.build_load res "access4" builder*)
+                  L.build_gep struct_ptr [| idx |] "access3" builder
+              in 
+              let llargs = List.map load_args (List.init n (fun x -> x))
+              in
+              let result = (match fdecl.styp with
+                      | _ -> f ^ "_result")
+              in L.build_call fdef (Array.of_list llargs) result builder
             | SCall ("printbig", [e]) ->
               L.build_call printbig_func [| (expr builder e) |]
               "printbig" builder
@@ -347,14 +402,15 @@ let translate (globals, functions) =
                             | _ -> L.build_ret (expr builder e) builder );
                      builder
       | SSetn(t, s, e1, e2) -> ignore((match t with
-                               List(Int) -> L.build_call setn_int_func
+                                List(Int) -> L.build_call setn_int_func
                                             [|L.build_load (lookup s) s builder;
                                             expr builder e1; expr builder e2;|]
                                             "" builder
-                              |List(Float) -> L.build_call setn_double_func
+                              | List(Float) -> L.build_call setn_double_func
                                               [|L.build_load (lookup s) s builder;
                                               expr builder e1; expr builder e2;|]
-                                              "" builder)); builder
+                                              "" builder
+                              | _ -> raise (Failure "List type error"))); builder
       | SIf (predicate, then_stmt, else_stmt) ->
           let bool_val = expr builder predicate
           in

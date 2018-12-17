@@ -1,0 +1,17 @@
+int bar(int v)
+    return v + 2
+Siri
+
+int foo(int a)
+    return a + 1
+Siri
+
+int main()
+    1
+    |
+    foo
+    |
+    bar
+    |
+    printi
+Siri

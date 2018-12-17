@@ -3,7 +3,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Float | String | List of typ
+type typ = Int | Bool | Float | String | List of typ | Tuple of typ list
 
 type bind = typ * string
 
@@ -18,6 +18,7 @@ type expr =
   | Assign of string * expr
   | Call of string * expr list
   | Llist of expr list
+  | Ltuple of expr list
   | Getn of string * expr
 
 type stmt =
@@ -74,6 +75,7 @@ let rec string_of_expr = function
   (* | Noexpr -> "" *)
   | Lstring(s) -> s
   | Llist(l) -> "[" ^ String.concat ", " (List.map string_of_expr l) ^ "]"
+  | Ltuple(l) -> "(" ^ String.concat ", " (List.map string_of_expr l) ^ ")"
   | Getn(e1,e2) -> e1 ^ "[" ^ string_of_expr e2 ^ "]"
 
 let rec string_of_stmt = function
@@ -94,6 +96,7 @@ let rec string_of_typ = function
   | Float -> "float"
   | String -> "string"
   | List(t) -> string_of_typ t ^ "[]"
+  | Tuple(l) -> "tuple(" ^ String.concat ", " (List.map string_of_typ l) ^ ")"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 

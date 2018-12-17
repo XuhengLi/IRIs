@@ -9,7 +9,7 @@ open Ast
 %token PLUS MINUS TIMES DIVIDE MOD
 %token EQ NEQ LEQ GEQ LT GT OR AND NOT
 %token EOF PIPE
-%token INT FLOAT BOOL STRING
+%token INT FLOAT BOOL STRING TUPLE
 %token RETURN
 %token <string> LSTR ID LFLT
 %token <int> LINT
@@ -61,12 +61,17 @@ param_list:
 TYPE:
     basic_type          { $1 }
     | basic_type LSQR RSQR      { List($1)}
+    | TUPLE LPAR basic_type_list RPAR                    { Tuple(List.rev $3) }
 
+basic_type_list:
+        {[]}
+    | basic_type_list basic_type      {$2 :: $1}
 basic_type:
     FLOAT               { Float }
     | INT               { Int}
     | STRING            { String }
     | BOOL              { Bool }
+    
 
 /* end of decls */
 
@@ -79,9 +84,9 @@ stmt_list:
 stmt:
     | expr NEWLINE                                      { Expr $1 }
     | RETURN expr NEWLINE                               { Return($2) }
-    | IF LPAR expr RPAR NEWLINE stmt %prec NOELSE ENDIF NEWLINE       { If($3, $6, Block([])) }
-    | IF LPAR expr RPAR NEWLINE stmt ELSE NEWLINE stmt ENDIF NEWLINE  { If($3, $6, $9) }
-    | WHILE LPAR expr RPAR NEWLINE stmt ENDLOOP NEWLINE               { While($3, $6) }
+    | IF LPAR expr RPAR NEWLINE stmt_list %prec NOELSE ENDIF NEWLINE       { If($3, Block(List.rev $6), Block([])) }
+    | IF LPAR expr RPAR NEWLINE stmt_list ELSE NEWLINE stmt_list ENDIF NEWLINE  { If($3, Block(List.rev $6), Block(List.rev $9)) }
+    | WHILE LPAR expr RPAR NEWLINE stmt_list ENDLOOP NEWLINE               { While($3, Block(List.rev $6)) }
     | expr PIPE ID LSQR expr RSQR NEWLINE                       { Setn($3, $5, $1) }
     /*| LPAR expr_list RPAR PIPE TYPE id_list NEWLINE { VarMulDecl($2, $5, $6)}*/
 
@@ -111,6 +116,7 @@ expr:
     | LBOOL                     { Lbool($1) }
     | ID                        { Id($1) }
     | LSQR expr_list RSQR       { Llist($2) }
+    | LPAR expr_list RPAR       { Ltuple($2) }
     | expr PLUS   expr   { Binop($1, Add,   $3) }
     | expr PIPE PLUS expr { Binop($1, Add, $4) }
     | expr MINUS  expr   { Binop($1, Sub,   $3) }
