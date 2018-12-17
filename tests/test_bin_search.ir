@@ -1,0 +1,34 @@
+int binary_search(int target, int[] nums)
+    int n, l, r, mid
+    0
+    |
+    l
+    length(nums)
+    |
+    n
+    while(l<n)
+        l
+        |
+        +r
+        |
+        /2
+        |
+        mid
+        if(target=nums[mid])
+            return mid
+        fi
+        if(target>nums[mid])
+            1
+            |
+            +mid
+            |
+            l
+        else
+            mid
+            |
+            -1
+            |
+            r
+    endwhile
+    return -1
+Siri

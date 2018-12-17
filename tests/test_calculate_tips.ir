@@ -1,0 +1,55 @@
+int main()
+    int i, n, id
+    float bill
+    float[] tip_rate
+    0
+    |
+    i
+    length(tip_rate)
+    |
+    n
+    [0.12, 0.15, 0.18, 0.20]
+    |
+    tip_rate
+    "Please input your bill:\n"
+    |
+    inputfloat
+    |
+    bill
+    while(i<n)
+        1
+        +i
+        |
+        print_i
+        ": "
+        |
+        print
+        tip_rate[i]
+        |
+        printfloat
+        "\n"
+        |
+        print
+        1
+        +i
+        |
+        i
+    endwhile
+    "Choose the tip rate"
+    |
+    inputi
+    |
+    id
+    "Your tip is: "
+    |
+    print
+    tip_rate[id]
+    |
+    *bill
+    |
+    printfloat
+    "\n"
+    |
+    print
+    return 0
+Siri
