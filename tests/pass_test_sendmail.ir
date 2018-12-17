@@ -1,0 +1,17 @@
+int main()
+    string content,email
+    
+    inputstring(0)
+    |
+    content
+
+    inputstring(0)
+    |
+    email
+
+    sendmail(content,email)
+    |
+    a
+
+    printi(a)
+Siri

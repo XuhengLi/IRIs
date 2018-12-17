@@ -1,6 +1,6 @@
 .PHONY : all
-all : iris.native inputint.o inputfile.o inputgui.o
-
+all : iris.native inputint.o inputfile.o inputgui.o sendmail.o inputstring.o
+	
 iris.native:
 	opam config exec -- \
 	ocamlbuild -use-ocamlfind -pkg llvm -package llvm.analysis iris.native
@@ -8,11 +8,17 @@ iris.native:
 inputint: inputint.c
 	clang -o inputint inputint.c
 
+inputstring: inputstring.c
+	clang -o inputstring inputstring.c
+
 inputfile: inputfile.c
 	clang -o inputfile inputfile.c
 
 inputgui.o: inputgui.c
-	clang -c inputgui.c `pkg-config --libs gtk+-3.0`
+	clang `pkg-config --cflags gtk+-3.0` -c inputgui.c `pkg-config --libs gtk+-3.0`
+
+sendmail: sendmail.c
+	clang -o sendmail sendmail.c
 
 
 # "make clean" removes all generated files

@@ -98,17 +98,45 @@ let translate (globals, functions) =
   let inputstring_func : L.llvalue =
       L.declare_function "inputstring" inputstring_t the_module
   in
+  let inputstring_t : L.lltype =
+      L.function_type str_t [| i32_t |]
+  in
+  let inputstring_func : L.llvalue =
+      L.declare_function "inputstring" inputstring_t the_module
+  in
+  let inputfloat_t : L.lltype =
+      L.function_type str_t [| i32_t |]
+  in
+  let inputfloat_func : L.llvalue =
+      L.declare_function "inputfloat" inputfloat_t the_module
+  in
   let inputfile_t : L.lltype =
       L.function_type str_t [| str_t;i32_t|]
   in
   let inputfile_func : L.llvalue =
       L.declare_function "inputfile" inputfile_t the_module
   in
+  let cmd_t : L.lltype =
+      L.function_type str_t [| str_t|]
+  in
+  let cmd_func : L.llvalue =
+      L.declare_function "cmd" cmd_t the_module
+  in
   let inputgui_t : L.lltype =
       L.function_type i32_t [| i32_t |]
   in
   let inputgui_func : L.llvalue =
       L.declare_function "inputgui" inputgui_t the_module
+  in
+  let sendmail_t : L.lltype =
+      L.function_type i32_t [|str_t;str_t|]
+  in
+  let sendmail_func : L.llvalue =
+      L.declare_function "sendmail" sendmail_t the_module
+  
+  
+
+
 
   in
   (* Declare the built-in strlen() function  *)
@@ -357,6 +385,14 @@ let translate (globals, functions) =
               L.build_call strlen_func [|(expr builder e)|] "strlen" builder
             | SCall ("inputint", [e]) ->
               L.build_call inputint_func [| (expr builder e) |] "inputint" builder
+            | SCall ("inputfloat", [e]) ->
+              L.build_call inputfloat_func [| (expr builder e) |] "inputfloat" builder
+            | SCall ("cmd", [e]) ->
+              L.build_call cmd_func [| (expr builder e) |] "cmd" builder
+            | SCall ("inputstring", [e]) ->
+              L.build_call inputstring_func [| (expr builder e) |] "inputstring" builder
+            | SCall ("sendmail", [e]) ->
+              L.build_call sendmail_func [| (expr builder e1);(expr builder e2) |] "sendmail" builder
             | SCall ("inputgui", [e]) ->
               L.build_call inputgui_func [| (expr builder e) |] "inputgui" builder
             | SCall ("inputfile", [e1; e2]) ->

@@ -2,7 +2,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
- char *inputfile( char * str, int length) {
+ char *inputfile(char * str, int length) {
   char *text = malloc(length * sizeof(char));
   FILE *fp=fopen(str, "r");
   int i=0;
