@@ -6,7 +6,7 @@ open Ast
 %token IF ELIF ENDIF ELSE ENDFUN NEWLINE
 %token WHILE ENDLOOP BREAK CONTINUE
 %token TRUE FALSE
-%token PLUS MINUS TIMES DIVIDE MOD
+%token PLUS MINUS TIMES DIVIDE MOD LENGTH
 %token EQ NEQ LEQ GEQ LT GT OR AND NOT
 %token EOF PIPE
 %token INT FLOAT BOOL STRING TUPLE
@@ -117,6 +117,7 @@ expr:
     | ID                        { Id($1) }
     | LSQR expr_list RSQR       { Llist($2) }
     | ZDKH expr_list YDKH       { Ltuple($2) }
+    | LENGTH LPAR expr RPAR     { Length($3)}
     | expr PLUS   expr   { Binop($1, Add,   $3) }
     | expr PIPE PLUS expr { Binop($1, Add, $4) }
     | expr MINUS  expr   { Binop($1, Sub,   $3) }

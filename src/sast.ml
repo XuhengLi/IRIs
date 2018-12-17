@@ -17,6 +17,7 @@ and sx =
   | SLlist of sexpr list
   | SLtuple of sexpr list
   | SGetn of string * sexpr
+  | SLength of sexpr
   (* | SNoexpr *)
 
 type sstmt =
@@ -56,6 +57,7 @@ let rec string_of_sexpr (t, e) =
   | SLlist l -> "[" ^ String.concat ", " (List.map string_of_sexpr l) ^ "]"
   | SLtuple l -> "(" ^ String.concat ", " (List.map string_of_sexpr l) ^ ")"
   | SGetn (e1, e2) -> "SGetn(" ^ e1 ^ ", " ^ string_of_sexpr e2 ^ ")"
+  | SLength(e) -> "SLengthof" ^ string_of_sexpr e
   (* | SNoexpr -> "" *)
 				  ) ^ ")"
 

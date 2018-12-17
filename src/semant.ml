@@ -95,6 +95,7 @@ let check (globals, functions) =
        Lint _ -> List(Int)
      | Lfloat _ -> List(Float)
      | Lbool _ -> List(Bool)
+     | Lstring _ -> List(String)
      (* TODO | (* nested list *) *)
      | _ -> raise ( Failure ("Cannot instantiate a list of that type"))
     in
@@ -106,6 +107,7 @@ let check (globals, functions) =
        (List(Int), Lint _) -> if idx == length - 1 then List(Int) else check_all_list_literal m (List(Int)) (succ idx)
      | (List(Float), Lfloat _) -> if idx == length - 1 then List(Float) else check_all_list_literal m (List(Float)) (succ idx)
      | (List(Bool), Lbool _) -> if idx == length - 1 then List(Bool) else check_all_list_literal m (List(Bool)) (succ idx)
+     | (List(String), Lstring _) -> if idx == length - 1 then List(String) else check_all_list_literal m (List(String)) (succ idx)
      (* TODO | (* nested list *) *)
      | _ -> raise (Failure ("illegal list literal"))
     in
@@ -189,6 +191,12 @@ let check (globals, functions) =
               in
               let args' = List.map2 check_call fd.formals args
               in (fd.typ, SCall(fname, args'))
+      | Length(e) as len ->
+        let e' = expr e in (match e' with 
+            (List(_), SId _)
+            | (_, SLlist(_)) -> (Int, SLength e')
+            | _ -> raise(Failure ("length can only applied to list" ^ string_of_expr len))
+        )
 
     in
 
@@ -219,18 +227,7 @@ let check (globals, functions) =
             | []              -> []
          in SBlock(check_stmt_list sl)
       | Setn(s, e1, e2) ->
-          let _ = (match (expr e1) with
-                   (Int, SLint l) -> (Int, SLint l)
-                  | _ -> raise (Failure ("attempting to access with a non-integer type")))
-          in
-          let lt = list_access_type (type_of_identifier s)
-          in
-          let vt = fst (expr e2)
-          in
-          let _ = (match lt with
-                    vt -> vt
-                    | _ -> raise (Failure "assign type is not compatible with the list type"))
-          in SSetn(type_of_identifier s, s, expr e1, expr e2)
+        SSetn(type_of_identifier s, s, expr e1, expr e2)
     in (* body of check_function *)
     {
       styp = func.typ;

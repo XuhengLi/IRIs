@@ -27,4 +27,3 @@ let () =
     | Compile -> let m = Codegen.translate sast in
   Llvm_analysis.assert_valid_module m;
   print_string (Llvm.string_of_llmodule m)
-    | _ -> print_string "null\n"

@@ -20,6 +20,7 @@ type expr =
   | Llist of expr list
   | Ltuple of expr list
   | Getn of string * expr
+  | Length of expr
 
 type stmt =
     Block of stmt list
@@ -77,6 +78,7 @@ let rec string_of_expr = function
   | Llist(l) -> "[" ^ String.concat ", " (List.map string_of_expr l) ^ "]"
   | Ltuple(l) -> "(" ^ String.concat ", " (List.map string_of_expr l) ^ ")"
   | Getn(e1,e2) -> e1 ^ "[" ^ string_of_expr e2 ^ "]"
+  | Length(s) -> "length of " ^ string_of_expr s
 
 let rec string_of_stmt = function
     Block(stmts) ->

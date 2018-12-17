@@ -127,6 +127,29 @@ struct iris_list_head *append_char(struct iris_list_head *head, int num, ...)
     return head;
 }
 
+// struct iris_list_head *append_string(struct iris_list_head *head, int num, ...)
+// {
+//     int err, i;
+//     char value;
+//     va_list valist;
+
+//     va_start(valist, num);
+//     for (i = 0; i < num; i++) {
+//         value = va_arg(valist, int);
+//         err = __append1(&head, sizeof(char));
+//         if (err)
+//             perror("IRIs error: ");
+
+//         memcpy(&(head->data.c[head->length]),
+//                                  &value, sizeof(char));
+//         head->length += 1;
+//     }
+//     va_end(valist);
+
+//     return head;
+// }
+
+
 int getn_int(struct iris_list_head *head, int n)
 {
     if (n >= head->length) {
@@ -186,16 +209,11 @@ void setn_char(struct iris_list_head *head, int n, char value)
     }
     head->data.c[n] = value;
 }
-//     return head;
-// }
-// struct iris_list_head *append_string(struct iris_list_head *head, char *value)
-// {
-//     int err;
 
-//     err = __append1(&head, &value, sizeof(char) * (strlen(value) + 1));
-//     if (err)
-//         perror("IRIs error: ");
-
+int length(struct iris_list_head *head)
+{
+    return head->length;
+}
 //     return head;
 // }
 

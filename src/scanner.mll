@@ -2,7 +2,8 @@
 
 rule token =
     parse [' ' '\t' '\r']       { token lexbuf }  (* whitespace *)
-    | [' ' '\t' '\r' '\n']*'|'[' ' '\t' '\r' '\n']* { PIPE }
+    | "||"                      { OR }
+    | [' ' '\t' '\r' '\n']+'|'[' ' '\t' '\r' '\n']+ { PIPE }
     | "/*"                      { comment lexbuf }(* start comment *)
     (* operators*)
     | '+'
@@ -31,7 +32,6 @@ rule token =
     | ">="                      { GEQ }
     | '<'                       { LT }
     | '>'                       { GT }
-    | "||"                      { OR }
     | "&&"                      { AND }
     | '!'                       { NOT }
     | ("true"|"false") as bl    { LBOOL(bool_of_string bl) }
@@ -55,6 +55,7 @@ rule token =
     | "continue"                { CONTINUE }
     | "break"                   { BREAK }
     | "Siri"                    { ENDFUN }
+    | "length"                  { LENGTH }
     | eof                       { EOF }
     (* String *)
     | '"'                       {

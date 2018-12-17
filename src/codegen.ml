@@ -193,6 +193,12 @@ let translate (globals, functions) =
   let sassign_func : L.llvalue =
       L.declare_function "sassign" sassign_t the_module
   in
+  let length_t : L.lltype =
+      L.function_type i32_t [| list_t |]
+  in
+  let length_func : L.llvalue =
+      L.declare_function "length" length_t the_module
+  in
   (* Declare heap storage function *)
   let calloc_t = L.function_type str_t [| i32_t ; i32_t|] in
   let calloc_func = L.declare_function "calloc" calloc_t the_module in
@@ -220,8 +226,7 @@ let translate (globals, functions) =
     let builder = L.builder_at_end context (L.entry_block the_function)
     in
 
-    let char_format_str = L.build_global_stringptr "%s\n" "fmt" builder
-    and int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
+    let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
     and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder
     in
     (* Construct the function's "locals": formal arguments and locally
@@ -267,7 +272,7 @@ let translate (globals, functions) =
     (* Construct code for an expression; return its value *)
     let rec expr builder ((sx, e) : sexpr) = match e with
         SLint i  -> L.const_int i32_t i
-      | SLbool b  -> L.const_int i8_t (if b then 1 else 0)
+      | SLbool b  -> L.const_int i1_t (if b then 1 else 0)
       | SLfloat l -> L.const_float_of_string float_t l
       | SId s       -> L.build_load (lookup s) s builder
       | SLstring s -> build_string s builder
@@ -347,6 +352,8 @@ let translate (globals, functions) =
               A.Neg when t = A.Float -> L.build_fneg
             | A.Neg                  -> L.build_neg
             | A.Not                  -> L.build_not) e' "tmp" builder 
+          | SLength(e) ->
+              L.build_call length_func [| (expr builder e) |] "length" builder
             | SCall ("print", [e]) ->
               L.build_call printf_func [|(expr builder e)|] "printf" builder
             | SCall ("printb", [e]) ->
