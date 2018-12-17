@@ -84,7 +84,7 @@ let translate (globals, functions) =
       L.declare_function "inputint" inputint_t the_module
   in
   let inputstring_t : L.lltype =
-      L.function_type str_t [| str_t |]
+      L.function_type str_t [| i32_t|]
   in
   let inputstring_func : L.llvalue =
       L.declare_function "inputstring" inputstring_t the_module
@@ -102,7 +102,7 @@ let translate (globals, functions) =
       L.declare_function "inputfile" inputfile_t the_module
   in
   let cmd_t : L.lltype =
-      L.function_type str_t [| str_t|]
+      L.function_type i32_t [| str_t|]
   in
   let cmd_func : L.llvalue =
       L.declare_function "cmd" cmd_t the_module
@@ -294,8 +294,8 @@ let translate (globals, functions) =
                                   in L.build_call fdef (Array.of_list llargs) result builder
 
                           in
-                        (match sx with
-                          String -> let e' = L.build_call sassign_func [|L.build_load n s builder; expr builder e;|] "sassign" builder
+                        (match e with
+                          (String, SLstring(l)) -> let e' = L.build_call sassign_func [|L.build_load n s builder; expr builder e;|] "sassign" builder
                                     in ignore(L.build_store e' n builder); e'
                           | _ -> let e' = expr builder e
                                 in ignore(L.build_store e' n builder); e')

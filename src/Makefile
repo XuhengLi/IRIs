@@ -1,5 +1,5 @@
 .PHONY : all
-all : iris.native inputint.o inputfile.o inputgui.o sendmail.o inputstring.o
+all : iris.native inputint.o inputfile.o inputgui.o sendmail.o inputstring.o cmd.o
 	
 iris.native:
 	opam config exec -- \
@@ -13,6 +13,9 @@ inputstring: inputstring.c
 
 inputfile: inputfile.c
 	clang -o inputfile inputfile.c
+
+cmd: cmd.c
+	clang -o cmd cmd.c
 
 inputgui.o: inputgui.c
 	clang `pkg-config --cflags gtk+-3.0` -c inputgui.c `pkg-config --libs gtk+-3.0`

@@ -36,11 +36,11 @@ let check (globals, functions) =
         (String, "strcpy", [(String, "x");(String, "x1")]);
         (Int, "inputint", [(Int, "x")]);
         (Float, "inputfloat", [(Float, "x")]);
-        (String, "inputstring", [(String, "x")]);
+        (String, "inputstring", [(Int, "x")]);
         (String, "calloc", [(Int, "x1")]);
         (Int, "free", [(String, "x")]);
         (Int, "inputgui", [(Int, "x")]);
-        (String, "cmd", [(String, "x")]);
+        (Int, "cmd", [(String, "x")]);
         (Int, "sendmail", [(String, "x1");(String, "x2")]);
         (String, "inputfile", [(String, "x1");(Int, "x")]);
         (*add built-in function here*)]

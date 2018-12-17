@@ -1,17 +1,14 @@
 int main()
     string content,email
-    
+    int a
     inputstring(0)
     |
     content
-
     inputstring(0)
     |
     email
-
     sendmail(content,email)
     |
     a
-
     printi(a)
 Siri

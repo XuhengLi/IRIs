@@ -1,0 +1,26 @@
+int main()
+    string content, mail, command
+    inputstring(0)
+    |
+    content
+    inputstring(0)
+    |
+    mail
+    calloc(80)
+    |
+    command
+    strcpy(command, "echo ")
+    |
+    command
+    strcat(command, content)
+    |
+    command
+    strcat(command," | mail -s \"noreply at `date`\" ")
+    |
+    command
+    strcat(command, mail)
+    |
+    command
+    |
+    cmd
+Siri
