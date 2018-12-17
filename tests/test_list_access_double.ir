@@ -7,13 +7,13 @@ int main()
     a[0]
     |
     b
+    printf(b)
     a[1]
     |
     b
+    printf(b)
     a[2]
     |
     b
-    a[3]
-    |
-    b
+    printf(b)
 Siri
