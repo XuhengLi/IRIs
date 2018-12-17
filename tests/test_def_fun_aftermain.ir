@@ -1,0 +1,13 @@
+int main()
+    int a
+    add(5)
+    |
+    a
+    printi(a)
+Siri
+
+int add(int n)
+    n+1
+    |
+    n
+Siri
