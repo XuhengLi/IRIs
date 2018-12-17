@@ -169,7 +169,7 @@ if [ $# -ge 1 ]
 then
     files=$@
 else
-    files="tests/test_*.ir"
+    files="tests/test_*.ir tests/fail_*.ir"
 fi
 
 for file in $files
@@ -177,6 +177,9 @@ do
     case $file in
 	*test_*)
 	    Check $file 2>> $globallog
+	    ;;
+	*fail_*)
+	    CheckFail $file 2>> $globallog
 	    ;;
 	*)
 	    echo "unknown file type $file"
