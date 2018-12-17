@@ -8,4 +8,5 @@ int main()
     else
         4|a
     fi
+    printi(a)
 Siri
