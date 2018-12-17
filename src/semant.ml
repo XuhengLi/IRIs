@@ -35,6 +35,8 @@ let check (globals, functions) =
         (String, "strcat", [(String, "x1");(String, "x2")]);
         (String, "strcpy", [(String, "x");(String, "x1")]);
         (Int, "inputint", [(Int, "x")]);
+        (Float, "inputfloat", [(Float, "x")]);
+        (String, "inputstring", [(String, "x")]);
         (String, "calloc", [(Int, "x1")]);
         (Int, "free", [(String, "x")]);
         (*add built-in function here*)]
