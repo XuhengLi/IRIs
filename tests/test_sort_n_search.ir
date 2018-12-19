@@ -1,0 +1,110 @@
+int print_list(int[] l)
+    int i
+
+    0
+    |
+    i
+
+    while(i<length(l))
+        printi(l[i])
+        i
+        |
+        +1
+        |
+        i
+    end
+    return 0
+Siri
+
+int binary_search(int target, int[] nums)
+    int n, l, r, mid
+    0
+    |
+    l
+    length(nums)
+    |
+    n
+    n
+    |
+    -1
+    |
+    r
+    while(l<r)
+        (l
+        |
+        +r)
+        |
+        /2
+        |
+        mid
+        if(target=nums[mid])
+            return mid
+        fi
+        if(target>nums[mid])
+            1
+            |
+            +mid
+            |
+            l
+        else
+            mid
+            |
+            r
+        fi
+    end
+    return -1
+Siri
+
+int[] sort(int [] arr)
+    int n, idx, i, j, tmp
+    length(arr)
+    |
+    n
+    0
+    |
+    idx
+    0
+    |
+    i
+    while(i<n)
+        0
+        |
+        j
+        while(j<(n - i - 1))
+            if(arr[j+1]<arr[j])
+                arr[j]
+                |
+                tmp
+                arr[j+1]
+                |
+                arr[j]
+                tmp
+                |
+                arr[j+1]
+            fi
+            1
+            |
+            +j
+            |
+            j
+        end
+        1
+        |
+        +i
+        |
+        i
+    end
+    return arr
+Siri
+
+int main()
+    int[] sorted_list
+    sort([3,5,2,6,1])
+    |
+    sorted_list
+
+    binary_search(2, sorted_list)
+    |
+    printi
+    return 0
+Siri

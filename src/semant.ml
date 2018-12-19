@@ -141,8 +141,7 @@ let check (globals, functions) =
 
       | Getn(s, e) -> let e' = expr e in
                       let _ = (match e' with
-                           (Int, SId _)
-                          | (Int, SLint _) -> e'
+                           (Int, _) -> e'
                           | _ -> raise (Failure ("attempting to access with a non-integer type"))) in
                           ( list_access_type (type_of_identifier s), SGetn(s, e') )
       | Unop(op, e) as ex ->

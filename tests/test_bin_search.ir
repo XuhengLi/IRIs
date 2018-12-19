@@ -6,10 +6,15 @@ int binary_search(int target, int[] nums)
     length(nums)
     |
     n
+    n
+    |
+    -1
+    |
+    r
     while(l<r)
-        l
+        (l
         |
-        +r
+        +r)
         |
         /2
         |
@@ -26,8 +31,6 @@ int binary_search(int target, int[] nums)
         else
             mid
             |
-            -1
-            |
             r
         fi
     end
@@ -35,7 +38,7 @@ int binary_search(int target, int[] nums)
 Siri
 
 int main()
-    {0, [1, 2, 3, 4, 5, 6]}
+    {2, [1, 2, 3, 4, 5, 6]}
     |
     binary_search
     |
